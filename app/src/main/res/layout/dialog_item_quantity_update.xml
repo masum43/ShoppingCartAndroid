@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/click_after_amount"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/colorPrimaryDark"
+            android:gravity="end|center_vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Enter Quantity "
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cart_plus_minus_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/product_cart_code"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+
+            <ImageView
+                android:layout_marginRight="30dp"
+                android:id="@+id/cart_decrement"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/minus" />
+
+            <EditText
+                android:focusable="true"
+                android:id="@+id/cart_product_quantity_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:digits="0123456789"
+                android:inputType="number"
+                android:maxLength="4"
+                android:padding="10dp"
+                android:text="1"
+                android:textColor="#000"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_marginLeft="30dp"
+                android:id="@+id/cart_increment"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/add" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="end|center_vertical"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/update_quantity_dialog"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:background="@color/colorPrimaryDark"
+                android:text="Add to cart"
+                android:textColor="#fff"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/view_cart_button_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+
+            android:background="@color/colorPrimary"
+            android:text="View Cart"
+            android:textColor="#fff"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</LinearLayout>

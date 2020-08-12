@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="@dimen/_5sdp"
+    app:cardCornerRadius="@dimen/_5sdp"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:background="#fff"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <!-- ListRow Left sied Thumbnail image -->
+
+        <LinearLayout
+            android:id="@+id/thumbnail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="7dip"
+            android:padding="2dip">
+
+            <ImageView
+                android:id="@+id/list_image_cart"
+                android:layout_width="50dip"
+                android:layout_height="50dip" />
+        </LinearLayout>
+
+        <!-- Title Of Song -->
+
+
+        <TextView
+            android:id="@+id/product_cart_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/thumbnail"
+            android:text=""
+            android:textColor="#040404"
+            android:textSize="15sp"
+            android:typeface="sans" />
+
+        <LinearLayout
+            android:id="@+id/cart_plus_minus_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/product_cart_code"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/product_cart_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginStart="60dip"
+                android:layout_weight="0.23"
+                android:lines="1"
+                android:paddingEnd="5dip"
+                android:text=""
+                android:textColor="#1d1d1d"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- <TextView
+                 android:id="@+id/product_cart_quantity"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="center_horizontal|center_vertical"
+                 android:paddingRight="25dip"
+                 android:text="quantiy"
+                 android:textColor="#343434"
+                 android:textSize="12dip" />-->
+
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:id="@+id/cart_decrement"
+                android:layout_width="27dp"
+                android:layout_height="27dp"
+                android:src="@drawable/minus" />
+
+            <EditText
+                android:editable="false"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:id="@+id/cart_product_quantity_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/round_quantity"
+                android:gravity="center"
+                android:paddingRight="@dimen/_10sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:maxLength="4"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:id="@+id/cart_increment"
+                android:layout_width="27dp"
+                android:layout_height="27dp"
+                android:src="@drawable/add" />
+
+            <ImageView
+                android:id="@+id/delete_item_from_cart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_delete_black" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

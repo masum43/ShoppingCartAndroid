@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="05dp"
+    android:paddingLeft="05dp"
+    android:paddingRight="05dp" >
+
+    <TableRow android:background="#ffffff" android:padding="5dp">
+
+        <TextView
+            android:id="@+id/tvorderby"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:text="134455" />
+        <TextView
+            android:id="@+id/tvbill"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="12" />
+        <TextView
+        android:id="@+id/tvquantity"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="400" />
+        <Button
+            android:id="@+id/tvdetail"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="#149edd"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:text="@string/detail" />
+    </TableRow>
+
+</TableLayout>

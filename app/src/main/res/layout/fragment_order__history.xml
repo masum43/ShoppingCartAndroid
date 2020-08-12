@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?android:windowBackground"
+    tools:context=".Fragments.Order_History">
+    <TableLayout
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        android:background="#f6fafd"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="05dp"
+        android:paddingLeft="05dp"
+        android:paddingRight="05dp" >
+    <TableRow android:background="#f6fafd" android:padding="5dp">
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/order_by" />
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/total_bill" />
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/total_quantity" />
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/detail" />
+    </TableRow>
+    </TableLayout>
+<androidx.recyclerview.widget.RecyclerView
+    android:padding="05dp"
+    android:id="@+id/recycler_view_order"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+</androidx.recyclerview.widget.RecyclerView>
+
+</LinearLayout>
