@@ -519,14 +519,17 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
 
 
+
+
+
     private void loadNextPage() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Fetch_Products.URL+currentPage)
+                .baseUrl("https://skcc.luqmansoftwares.com/api/fetch-products"+ "/?page=" + currentPage)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
 
-        Fetch_Products api = retrofit.create(Fetch_Products.class);
-        Call<String> call = api.getProducts(currentPage);
+        Fetch_Categories_Products api = retrofit.create(Fetch_Categories_Products.class);
+        Call<String> call = api.getProducts("");
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
@@ -670,12 +673,12 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     private void loadFirstPage() {
         progressBar.setVisibility(View.VISIBLE);
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Fetch_Products.URL)
+                .baseUrl("https://skcc.luqmansoftwares.com/api/fetch-products"+ "/?page=" + currentPage)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
 
-        Fetch_Products api = retrofit.create(Fetch_Products.class);
-        Call<String> call = api.getProducts(1);
+        Fetch_Categories_Products api = retrofit.create(Fetch_Categories_Products.class);
+        Call<String> call = api.getProducts("");
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
