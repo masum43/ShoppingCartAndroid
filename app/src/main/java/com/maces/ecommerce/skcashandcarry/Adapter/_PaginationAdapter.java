@@ -31,6 +31,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.maces.ecommerce.skcashandcarry.Model.Movie;
 import com.maces.ecommerce.skcashandcarry.Model.ProductImage;
+import com.maces.ecommerce.skcashandcarry.Model.ProductModel;
 import com.maces.ecommerce.skcashandcarry.R;
 import com.maces.ecommerce.skcashandcarry.View.CartActivity;
 import com.maces.ecommerce.skcashandcarry.View.Category_Product;
@@ -59,6 +60,9 @@ public class _PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public static ArrayList<ProductImage> cartModels = new ArrayList<>();
     private Context context;
     private HomeCallBack homeCallBack;
+
+
+
 
     public _PaginationAdapter(Context context, HomeCallBack mCallBackus) {
         this.context = context;

@@ -140,6 +140,7 @@ public class Category_Product extends AppCompatActivity implements Category_Prod
     }
 
     private void loadNextPage() {
+        Log.d("cat_page", String.valueOf(currentPage));
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://skcc.luqmansoftwares.com/api/category/" + selected_id + "/?page=" + currentPage)
                 .addConverterFactory(ScalarsConverterFactory.create())
@@ -157,7 +158,7 @@ public class Category_Product extends AppCompatActivity implements Category_Prod
                 try {
                     JSONObject jsonObject = new JSONObject(response.body());
                     JSONArray jsonarray = jsonObject.getJSONArray("data");
-                    if (jsonarray.length() > 0) {
+                    if (jsonarray.length() > 1) {
                         for (int i = 0; i < jsonarray.length(); i++) {
                             JSONObject jsonobject = jsonarray.getJSONObject(i);
                             ProductModel product_class = new ProductModel();
