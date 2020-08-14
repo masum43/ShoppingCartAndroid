@@ -529,8 +529,8 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
         Log.d("token_",MySharedPref.getToken(getContext()));
 
                 HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("accept", "application/json");
-                headers.put("authorization", MySharedPref.getTokenType(getContext()) + " " + MySharedPref.getToken(getContext()));
+                headers.put("Accept", "application/json");
+                headers.put("Authorization", MySharedPref.getTokenType(getContext()) + " " + MySharedPref.getToken(getContext()));
 
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl(Sliders.URL)
