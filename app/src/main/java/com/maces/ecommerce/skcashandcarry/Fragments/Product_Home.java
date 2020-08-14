@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,13 +34,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.maces.ecommerce.skcashandcarry.Adapter.Categories_Adapter;
-import com.maces.ecommerce.skcashandcarry.Adapter.PaginationScrollListener;
 import com.maces.ecommerce.skcashandcarry.Adapter.SliderAdapter;
 import com.maces.ecommerce.skcashandcarry.Adapter._PaginationAdapter;
 import com.maces.ecommerce.skcashandcarry.Converter;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Fetch_Categories;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Fetch_Categories_Products;
-import com.maces.ecommerce.skcashandcarry.Interfaces.Fetch_Products;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Fetch_Slider_Images;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Get_UserInfor;
 import com.maces.ecommerce.skcashandcarry.Interfaces.OnBackPressed;
@@ -53,7 +52,6 @@ import com.maces.ecommerce.skcashandcarry.Model.ProductService;
 import com.maces.ecommerce.skcashandcarry.Model.SliderItem;
 import com.maces.ecommerce.skcashandcarry.R;
 import com.maces.ecommerce.skcashandcarry.View.CartActivity;
-import com.maces.ecommerce.skcashandcarry.View.Category_Product;
 import com.maces.ecommerce.skcashandcarry.View.Home;
 import com.maces.ecommerce.skcashandcarry.View.Login;
 import com.maces.ecommerce.skcashandcarry.View.Product_Detail;
@@ -114,6 +112,10 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
     private LinearLayout mLinearLayout;
 
+    //as
+    private NestedScrollView nestedScrollView;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -125,6 +127,10 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
         categoryRecycler = root.findViewById(R.id.layout_categoryRecycler);
         mLinearLayout = root.findViewById(R.id.linearLayout_focus);
         progressBar = root.findViewById(R.id.progressbar);
+
+        //as
+        nestedScrollView = root.findViewById(R.id.scroll_view);
+
         sliderItemList = new ArrayList<>();
         tv_no = root.findViewById(R.id.tv_no);
         country = new ArrayList<>();
@@ -148,6 +154,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
         categories_classArrayList = new ArrayList<>();
         recyclerView_Category = root.findViewById(R.id.category_Recycler);
         Fetch_Categories();
+
         Get_Userinfo();
 
         Fetch_Slider();
@@ -164,7 +171,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
 
         productRecyclerView = root.findViewById(R.id.grid_products);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         _paginationAdapter = new _PaginationAdapter(getActivity(), this);
 
 
@@ -172,11 +179,26 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
         productRecyclerView.setAdapter(_paginationAdapter);
 
 
-        productRecyclerView.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
+
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())
+                {
+                    currentPage++;
+                    loadNextPage();
+                    Log.d("PPP",String.valueOf(currentPage));
+                }
+            }
+        });
+
+
+       /* productRecyclerView.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
             @Override
             protected void loadMoreItems() {
                 isLoading = true;
-                //loadNextPage();
+                loadNextPage();
+                Log.d("LOAD","Yes"+String.valueOf(currentPage));
             }
 
             @Override
@@ -190,7 +212,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                 progressBar.setVisibility(View.VISIBLE);
                 return isLoading;
             }
-        });
+        });*/
 
 
         //  productAdapter = new ProductAdapter(arrayList, getActivity(), this);
@@ -247,6 +269,20 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
         });
 
         return root;
+    }
+
+
+
+    private void parseResult(JSONArray jsonArray) {
+        for (int i=0;i<jsonArray.length();i++)
+        {
+            try {
+                JSONObject object = jsonArray.getJSONObject(i);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -530,6 +566,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     private void loadNextPage() {
         if (currentPage >1)
         {
+            Log.d("HHH","yes");
             progressBar.setVisibility(View.VISIBLE);
             Log.d("current_page", String.valueOf(currentPage));
             Retrofit retrofit = new Retrofit.Builder()
@@ -679,7 +716,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                 }
             });
 
-            currentPage += 1;
+            //currentPage += 1;
 
         }
 
@@ -822,7 +859,8 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
             });
         }
 
-        currentPage += 1;
+        //currentPage += 1;
+        Log.d("CCC",String.valueOf(currentPage));
     }
 
 
