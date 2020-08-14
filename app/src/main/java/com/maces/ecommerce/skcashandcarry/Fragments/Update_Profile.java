@@ -16,9 +16,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -28,6 +37,12 @@ import com.maces.ecommerce.skcashandcarry.Model.ProductService;
 import com.maces.ecommerce.skcashandcarry.R;
 import com.maces.ecommerce.skcashandcarry.View.Login;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -38,7 +53,7 @@ import retrofit2.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class Update_Profile extends Fragment {
+public class Update_Profile extends Fragment implements AdapterView.OnItemSelectedListener{
 
     private TextInputEditText Fullname, Email, Password, Confirm, PostCode, Business, Address, Phone;
     static String access_token, token_type, price_category;
@@ -46,6 +61,12 @@ public class Update_Profile extends Fragment {
     private Button btn_Done;
     private SharedPreferences prf;
     private String name, email, business_name, mobile_number, business_address;
+    Spinner spinner;
+    private ArrayList<String> allCityList;
+    private String city_name;
+    private int city_id;
+    private String city_response;
+    private TextView cityNameTv;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +90,17 @@ public class Update_Profile extends Fragment {
         Address = root.findViewById(R.id.tvaddress);
         PostCode = root.findViewById(R.id.tvPostCode);
         btn_Done = root.findViewById(R.id.btn_Done);
+        cityNameTv=(TextView) root.findViewById(R.id.city_name_tv);
+
+
+        spinner = (Spinner) root.findViewById(R.id.spinner);
+
+        // Spinner click listener
+        spinner.setOnItemSelectedListener(this);
+
+        prepareCityDropDown();
+
+
         Get_Userinfo();
         btn_Done.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,7 +170,7 @@ public class Update_Profile extends Fragment {
         paramObject.addProperty("business_name", Business.getText().toString());
         paramObject.addProperty("post_code", PostCode.getText().toString().trim());
         paramObject.addProperty("address", Address.getText().toString());
-        paramObject.addProperty("city", 2);
+        paramObject.addProperty("city", city_id);
 
         if (token_type.length() < 1) {
             jsonPostService = ProductService.createService(com.maces.ecommerce.skcashandcarry.Interfaces.Update_Profile.class, "https://skcc.luqmansoftwares.com/api/auth/", Login.token_type_val + " " + Login.access_token_val);
@@ -247,6 +279,10 @@ public class Update_Profile extends Fragment {
                         business_name = response.body().get("business_name").getAsString();
                         Business.setText("" + business_name);
 
+                        city_response = response.body().get("city").getAsString();
+                        city_id = Integer.parseInt(city_response);
+                        cityNameTv.setText(city_response);
+
                     } else {
                         getProgressDialog.dismiss();
                         Toast.makeText(getActivity(), "Error:" + response.errorBody(), Toast.LENGTH_LONG).show(); // do something with that
@@ -285,5 +321,102 @@ public class Update_Profile extends Fragment {
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void prepareCityDropDown() {
+        getAllCityList();
+        // Spinner element
+
+
+
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, allCityList);
+
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinner.setAdapter(dataAdapter);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // On selecting a spinner item
+        city_name = parent.getItemAtPosition(position).toString();
+        city_id = position;
+
+        // Showing selected spinner item
+        Toast.makeText(parent.getContext(), "Selected: " + String.valueOf(position), Toast.LENGTH_LONG).show();
+    }
+    public void onNothingSelected(AdapterView<?> arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    public ArrayList<String> getAllCityList() {
+//        BackgroundApiTask backgroundApiTask = new BackgroundApiTask(context);
+//        myDatabaseSource = new MyDatabaseSource(context);
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+
+        final String savedata = "postData";
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.POST,
+                "https://skcc.luqmansoftwares.com/api/fetch-cities",
+                null,
+                new com.android.volley.Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        Log.d("city_list", String.valueOf(response));
+
+                        try {
+
+                            for (int i = 0; i < response.length(); i++) {
+
+                                JSONObject book_object = response.getJSONObject(i);
+                                String name = book_object.getString("name");
+
+                                allCityList.add(name);
+
+
+                            }
+
+                        } catch (JSONException e) {
+
+                            //Toast.makeText(this, "Server Error", Toast.LENGTH_LONG).show();
+                        }
+
+
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                //Toast.makeText(getContext(), "Response error...", Toast.LENGTH_SHORT).show();
+                // Do something when error occurred
+                Log.e("BackgroundApiTask : ", error.toString());
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() {
+                try {
+                    return savedata == null ? null : savedata.getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    Log.d("Unsprted Encoding", "URLleaveType");
+                    return null;
+                }
+            }
+
+        };
+        requestQueue.add(jsonArrayRequest);
+
+
+        return allCityList;
+
     }
 }

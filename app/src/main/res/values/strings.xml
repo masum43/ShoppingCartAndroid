@@ -45,7 +45,7 @@
     <string name="repassword">Confirm Password</string>
     <string name="phone">Mobile Number</string>
     <string name="business">Post Code</string>
-    <string name="address">Address</string>
+    <string name="address"> Delivery Address</string>
     <string name="alreadyhave">Already have an account ? </string>
     <string name="order_by">Order ID</string>
     <string name="detail">Details</string>

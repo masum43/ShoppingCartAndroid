@@ -9,4 +9,10 @@
     <color name="status">#5F9642</color>
     <color name="text_color">#818181</color>
     <color name="bg">#E4E1E1</color>
+    <color name="base">#000</color>
+    <color name="highlight">#000</color>
+    <color name="arrow">#000</color>
+    <color name="hint">#000</color>
+    <color name="error">#BF1522</color>
+    <color name="floating_label">#BF1522</color>
 </resources>

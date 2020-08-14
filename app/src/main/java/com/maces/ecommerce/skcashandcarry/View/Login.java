@@ -27,6 +27,7 @@ import com.google.gson.JsonObject;
 import com.maces.ecommerce.skcashandcarry.Login_User;
 import com.maces.ecommerce.skcashandcarry.Model.MyErrorMessage;
 import com.maces.ecommerce.skcashandcarry.Model.ServiceGenerator;
+import com.maces.ecommerce.skcashandcarry.MySharedPref;
 import com.maces.ecommerce.skcashandcarry.R;
 
 import java.text.ParseException;
@@ -225,6 +226,8 @@ public class Login extends AppCompatActivity {
                             editor.putString(access_token, response.body().get("access_token").getAsString());
                             editor.putString(expires_at, response.body().get("expires_at").toString());
                             editor.commit();
+                            MySharedPref.putToken(Login.this,response.body().get("access_token").getAsString());
+                            MySharedPref.putTokenType(Login.this,response.body().get("token_type").getAsString());
                             startActivity(logintintent);
                         }
                         else

@@ -1,6 +1,7 @@
 package com.maces.ecommerce.skcashandcarry.Fragments;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -29,10 +32,19 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.maces.ecommerce.skcashandcarry.Adapter.Categories_Adapter;
+import com.maces.ecommerce.skcashandcarry.Adapter.Category_ProductAdapter;
 import com.maces.ecommerce.skcashandcarry.Adapter.PaginationScrollListener;
 import com.maces.ecommerce.skcashandcarry.Adapter.SliderAdapter;
 import com.maces.ecommerce.skcashandcarry.Adapter._PaginationAdapter;
@@ -43,6 +55,8 @@ import com.maces.ecommerce.skcashandcarry.Interfaces.Fetch_Products;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Fetch_Slider_Images;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Get_UserInfor;
 import com.maces.ecommerce.skcashandcarry.Interfaces.OnBackPressed;
+import com.maces.ecommerce.skcashandcarry.Interfaces.Sliders;
+import com.maces.ecommerce.skcashandcarry.Interfaces.Webservices;
 import com.maces.ecommerce.skcashandcarry.MainActivity;
 import com.maces.ecommerce.skcashandcarry.Model.Cart_Class;
 import com.maces.ecommerce.skcashandcarry.Model.Categories_Class;
@@ -51,12 +65,14 @@ import com.maces.ecommerce.skcashandcarry.Model.ProductImage;
 import com.maces.ecommerce.skcashandcarry.Model.ProductModel;
 import com.maces.ecommerce.skcashandcarry.Model.ProductService;
 import com.maces.ecommerce.skcashandcarry.Model.SliderItem;
+import com.maces.ecommerce.skcashandcarry.MySharedPref;
 import com.maces.ecommerce.skcashandcarry.R;
 import com.maces.ecommerce.skcashandcarry.View.CartActivity;
 import com.maces.ecommerce.skcashandcarry.View.Category_Product;
 import com.maces.ecommerce.skcashandcarry.View.Home;
 import com.maces.ecommerce.skcashandcarry.View.Login;
 import com.maces.ecommerce.skcashandcarry.View.Product_Detail;
+import com.maces.ecommerce.skcashandcarry.View.order_placed;
 import com.smarteist.autoimageslider.IndicatorAnimations;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
@@ -65,19 +81,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import fr.ganfra.materialspinner.MaterialSpinner;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.maces.ecommerce.skcashandcarry.Adapter._PaginationAdapter.cartModels;
 
 public class Product_Home extends Fragment implements _PaginationAdapter.CallBackUs, _PaginationAdapter.HomeCallBack, OnBackPressed {
 
@@ -113,6 +135,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     private int currentPage = PAGE_START;
 
     private LinearLayout mLinearLayout;
+    private ArrayList<String> allCityList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -124,6 +147,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
         category_title = root.findViewById(R.id.layout_category_title);
         categoryRecycler = root.findViewById(R.id.layout_categoryRecycler);
         mLinearLayout = root.findViewById(R.id.linearLayout_focus);
+
         sliderItemList = new ArrayList<>();
         tv_no = root.findViewById(R.id.tv_no);
         country = new ArrayList<>();
@@ -149,6 +173,8 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
         Fetch_Categories();
         Get_Userinfo();
 
+
+
         Fetch_Slider();
         Gson gson = new Gson();
         String json = shapref.getString("Cart", "");
@@ -168,6 +194,25 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
         productRecyclerView.setLayoutManager(linearLayoutManager);
         productRecyclerView.setAdapter(_paginationAdapter);
+
+//        productRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                LinearLayoutManager layoutManager=LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
+//                int totalItemCount = layoutManager.getItemCount();
+//                int lastVisible = layoutManager.findLastVisibleItemPosition();
+//
+//                boolean endHasBeenReached = lastVisible + 5 >= totalItemCount;
+//                if (totalItemCount > 0 && endHasBeenReached) {
+//                    //you have reached to the bottom of your recycler view
+//                    currentPage += 1;
+//                    loadNextPage();
+//                }
+//            }
+//        });
+
+
+
 
         productRecyclerView.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
             @Override
@@ -189,6 +234,8 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                 return isLoading;
             }
         });
+
+
 
         //  productAdapter = new ProductAdapter(arrayList, getActivity(), this);
         searchAutoComplete = root.findViewById(R.id.searchAutoComplete);
@@ -245,6 +292,8 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
         return root;
     }
+
+
 
 
     @Override
@@ -410,39 +459,159 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     }
 
     private void Fetch_Slider() {
+
+//        final Context c = getContext();
+//            StringRequest stringRequest=new StringRequest(Request.Method.POST, Sliders.URL+"fetch-offers",
+//                    new com.android.volley.Response.Listener<String>() {
+//                        @Override
+//                        public void onResponse(String response) {
+//                            Log.d("sliders",response);
+////                            try {
+////                                JSONObject jsonObject = new JSONObject(response);
+////                                boolean success = jsonObject.getBoolean("success");
+////                                if (success)
+////                                {
+////                                    Toast.makeText(c, "Your Email Changed Successfully....", Toast.LENGTH_SHORT).show();
+////                                    Intent i = new Intent(c,LoginActivity.class);
+////                                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+////                                    c.startActivity(i);
+////                                }
+////                                else
+////                                {
+////                                    Toast.makeText(c, "Please check your internet connection", Toast.LENGTH_SHORT).show();
+////                                }
+////                            } catch (JSONException e) {
+////                                e.printStackTrace();
+////                            }
+//
+//
+//                        }
+//                    },
+//                    new com.android.volley.Response.ErrorListener(){
+//                        @Override
+//                        public void onErrorResponse(VolleyError error) {
+//
+//                        }
+//                    }){
+//
+//                //This is for Headers If You Needed
+//                public Map<String, String> getHeaders() throws AuthFailureError {
+//                    Map<String, String> params = new HashMap<String, String>();
+//                    params.put("Accept", "application/json");
+//                    params.put("Authorization", MySharedPref.getTokenType(getContext()) + " " + MySharedPref.getToken(getContext()));
+//                    return params;
+//                }
+//
+//
+//                protected Map<String,String> getParams() throws AuthFailureError
+//                {
+//                    Map<String,String> params=new HashMap<String, String>();
+//
+//                    //params.put("user_id",MySharedPref.getUserId(c));
+//                    //params.put("email",newEmail);
+//                    return params;
+//                }
+//            };
+//
+//            RequestQueue requestQueue= Volley.newRequestQueue(c);
+//            requestQueue.add(stringRequest);
+
+
+
+
+
+
+
+
+
         progressDialog.show();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Fetch_Slider_Images.URL)
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .build();
-        Fetch_Slider_Images api = retrofit.create(Fetch_Slider_Images.class);
-        Call<String> call = api.getSlider_Images();
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.i("Responsestring", response.body().toString());
-                //Toast.makeText()
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        Log.i("onSuccess", response.body().toString());
+        Log.d("token_type",MySharedPref.getTokenType(getContext()));
+        Log.d("token_",MySharedPref.getToken(getContext()));
 
-                        String jsonresponse = response.body().toString();
-                        parse_Slider(jsonresponse);
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("accept", "application/json");
+                headers.put("authorization", MySharedPref.getTokenType(getContext()) + " " + MySharedPref.getToken(getContext()));
 
-                    } else {
-                        progressDialog.dismiss();
-                        Log.i("onEmptyResponse", "Returned empty response");//Toast.makeText(getContext(),"Nothing returned",Toast.LENGTH_LONG).show();
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(Sliders.URL)
+                        .addConverterFactory(ScalarsConverterFactory.create())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+                Sliders jsonPostService = retrofit.create(Sliders.class);
+                Call<JsonObject> call = jsonPostService.ApiName(headers);
+                call.enqueue(new Callback<JsonObject>() {
+                    @Override
+                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                        Log.d("sliders", String.valueOf(response.code()));
                     }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
+                    @Override
+                    public void onFailure(Call<JsonObject> call, Throwable t) {
+                        progressDialog.dismiss();
+                        Toast.makeText(getContext(), "" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
 
-                progressDialog.dismiss();
 
-            }
-        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(Fetch_Slider_Images.URL)
+//                .addConverterFactory(ScalarsConverterFactory.create())
+//                .build();
+//        Fetch_Slider_Images api = retrofit.create(Fetch_Slider_Images.class);
+//        Call<String> call = api.getSlider_Images();
+//        call.enqueue(new Callback<String>() {
+//            @Override
+//            public void onResponse(Call<String> call, Response<String> response) {
+//                Log.i("Responsestring", response.body().toString());
+//                //Toast.makeText()
+//                if (response.isSuccessful()) {
+//                    if (response.body() != null) {
+//                        Log.i("onSuccess", response.body().toString());
+//
+//                        String jsonresponse = response.body().toString();
+//                        parse_Slider(jsonresponse);
+//
+//                    } else {
+//                        progressDialog.dismiss();
+//                        Log.i("onEmptyResponse", "Returned empty response");//Toast.makeText(getContext(),"Nothing returned",Toast.LENGTH_LONG).show();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<String> call, Throwable t) {
+//
+//                progressDialog.dismiss();
+//
+//            }
+//        });
     }
 
     private void parse_Slider(String response) {
@@ -523,6 +692,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
 
     private void loadNextPage() {
+        progressBar.setVisibility(View.VISIBLE);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://skcc.luqmansoftwares.com/api/fetch-products"+ "/?page=" + currentPage)
                 .addConverterFactory(ScalarsConverterFactory.create())
@@ -806,6 +976,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
 
 
+
     private void filter(String text) {
         _paginationAdapter.removeLoadingFooter();
         ArrayList<Movie> filteredList = new ArrayList<>();
@@ -835,4 +1006,11 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
         }
         Objects.requireNonNull(imm).hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+    boolean isLastVisible() {
+        LinearLayoutManager layoutManager =((LinearLayoutManager) productRecyclerView.getLayoutManager());
+        int pos = layoutManager.findLastCompletelyVisibleItemPosition();
+        int numItems =  _paginationAdapter.getItemCount();
+        return (pos >= numItems - 1);
+    }
+
 }

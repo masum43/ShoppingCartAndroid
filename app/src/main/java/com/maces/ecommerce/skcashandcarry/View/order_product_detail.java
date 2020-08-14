@@ -58,6 +58,7 @@ public class order_product_detail extends AppCompatActivity {
     SimpleDateFormat simpleDateFormat1,simpleDateFormat2;
     TextView order_number,tvDate;
     public static View view;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -11,30 +11,51 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.JsonObject;
+import com.maces.ecommerce.skcashandcarry.Adapter.Category_ProductAdapter;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Register_User;
 import com.maces.ecommerce.skcashandcarry.Model.ServiceGenerator;
 import com.maces.ecommerce.skcashandcarry.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fr.ganfra.materialspinner.MaterialSpinner;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Register extends AppCompatActivity {
+public class Register extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     protected TextView tv_Login;
     protected TextInputEditText tvFullname,tvEmail,tvPassowrd,tvrepassword,tvPhhone,tvBusiness,tvaddress;
     protected Button btn_Register;
     protected ProgressDialog progressDialog;
     protected ImageView img_back;
+    private ArrayList<String> allCityList = new ArrayList<>();
+    private int city_id;
+    private String city_name;
+    private TextView cityNameTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +76,15 @@ public class Register extends AppCompatActivity {
         tvPhhone=(TextInputEditText)findViewById(R.id.tvPhone);
         tvBusiness=(TextInputEditText)findViewById(R.id.tvBusiness);
         tvaddress=(TextInputEditText)findViewById(R.id.tvaddress);
+        cityNameTv=(TextView) findViewById(R.id.city_name_tv);
         progressDialog=new ProgressDialog(Register.this);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Creating User....");
         tv_Login=(TextView)findViewById(R.id.tvLogin);
         btn_Register=(Button)findViewById(R.id.btn_Register);
+
+        prepareCityDropDown();
+
         btn_Register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,6 +170,10 @@ public class Register extends AppCompatActivity {
                     tvaddress.setError(getResources().getString(R.string.correct_address));
                     tvaddress.setFocusable(true);
                 }
+                else if (cityNameTv.getText().toString().equals("Select City"))
+                {
+                    Toast.makeText(Register.this, "Please Select City!", Toast.LENGTH_SHORT).show();
+                }
                 else {
 //                    if(validateMobile(tvPhhone.getText().toString()))
 //                    {
@@ -179,7 +208,7 @@ public class Register extends AppCompatActivity {
         paramObject.addProperty("password_confirmation", tvrepassword.getText().toString());
         paramObject.addProperty("mobile_number", tvPhhone.getText().toString());
         paramObject.addProperty("business_name","" );
-        paramObject.addProperty("city", 1);
+        paramObject.addProperty("city", city_id);
         paramObject.addProperty("post_code", tvBusiness.getText().toString());
         paramObject.addProperty("address", tvaddress.getText().toString());
 
@@ -268,5 +297,122 @@ public class Register extends AppCompatActivity {
 return false;
         }
     }
+
+    private void prepareCityDropDown() {
+        getAllCityList();
+        // Spinner element
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+
+        // Spinner click listener
+        spinner.setOnItemSelectedListener(this);
+
+
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, allCityList);
+
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinner.setAdapter(dataAdapter);
+    }
+
+    public static String[] getStringArray(ArrayList<String> arr)
+    {
+
+        // declaration and initialise String Array
+        String str[] = new String[arr.size()];
+
+        // ArrayList to Array Conversion
+        for (int j = 0; j < arr.size(); j++) {
+
+            // Assign each value to String array
+            str[j] = arr.get(j);
+        }
+
+        return str;
+    }
+
+    public ArrayList<String> getAllCityList() {
+//        BackgroundApiTask backgroundApiTask = new BackgroundApiTask(context);
+//        myDatabaseSource = new MyDatabaseSource(context);
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        final String savedata = "postData";
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.POST,
+                "https://skcc.luqmansoftwares.com/api/fetch-cities",
+                null,
+                new com.android.volley.Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        Log.d("city_list", String.valueOf(response));
+
+                        try {
+
+                            for (int i = 0; i < response.length(); i++) {
+
+                                JSONObject book_object = response.getJSONObject(i);
+                                String name = book_object.getString("name");
+
+                                allCityList.add(name);
+
+
+                            }
+
+                        } catch (JSONException e) {
+
+                            //Toast.makeText(this, "Server Error", Toast.LENGTH_LONG).show();
+                        }
+
+
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                //Toast.makeText(getContext(), "Response error...", Toast.LENGTH_SHORT).show();
+                // Do something when error occurred
+                Log.e("BackgroundApiTask : ", error.toString());
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() {
+                try {
+                    return savedata == null ? null : savedata.getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    Log.d("Unsprted Encoding", "URLleaveType");
+                    return null;
+                }
+            }
+
+        };
+        requestQueue.add(jsonArrayRequest);
+
+
+        return allCityList;
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // On selecting a spinner item
+        city_name = parent.getItemAtPosition(position).toString();
+        city_id = position;
+
+        // Showing selected spinner item
+        Toast.makeText(parent.getContext(), "Selected: " + String.valueOf(position), Toast.LENGTH_LONG).show();
+    }
+    public void onNothingSelected(AdapterView<?> arg0) {
+        // TODO Auto-generated method stub
+    }
+
 
 }

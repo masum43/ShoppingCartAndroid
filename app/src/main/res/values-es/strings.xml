@@ -34,7 +34,7 @@
     <string name="repassword">Confirmar contraseña</string>
     <string name="phone">Número de teléfono</string>
     <string name="business">Código postal</string>
-    <string name="address">Habla a</string>
+    <string name="address">Dirección de entrega</string>
     <string name="alreadyhave">Ya tienes una cuenta ? </string>
 
     <string name="shoppingcart">Carrito de compras</string>
