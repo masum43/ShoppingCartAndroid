@@ -131,7 +131,7 @@
     <string name="enter_correct_email">Enter Correct Email </string>
     <string name="enter_passsword">Enter Password</string>
     <string name="enter_correct_password">Password length should be minimum 8 characters</string>
-<string name="areyousure">Are you sure you want to close this application?</string>
+    <string name="areyousure">Are you sure you want to close this application?</string>
     <string name="closeapp">Close Application</string>
     <string name="full_name_correct">Full name should be minimum 3 characters</string>
     <string name="password_not_match">Password do not match</string>
@@ -159,4 +159,4 @@
     <string name="cannotplace">Can Not Place Order</string>
     <string name="addto">Add to Cart</string>
     <string name="goback">Go Back</string>
- </resources>
+</resources>

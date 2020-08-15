@@ -1,7 +1,8 @@
 package com.maces.ecommerce.skcashandcarry.Model;
 
 public class SliderItem {
-    String ImageUrl,Description;
+    int id;
+    String title,price, ImageUrl,Description;
 
     public SliderItem(String imageUrl, String description) {
         ImageUrl = imageUrl;
@@ -9,6 +10,30 @@ public class SliderItem {
     }
 
     public SliderItem() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
     }
 
     public String getImageUrl() {

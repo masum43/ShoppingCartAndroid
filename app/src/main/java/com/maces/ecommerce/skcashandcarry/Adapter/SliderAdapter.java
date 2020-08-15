@@ -1,17 +1,21 @@
 package com.maces.ecommerce.skcashandcarry.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-
+import com.maces.ecommerce.skcashandcarry.Constant;
+import com.maces.ecommerce.skcashandcarry.OfferDetails;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 import com.squareup.picasso.Picasso;
 import com.maces.ecommerce.skcashandcarry.Model.SliderItem;
@@ -39,26 +43,34 @@ public class SliderAdapter extends
     @Override
     public void onBindViewHolder(SliderAdapterVH viewHolder, final int position) {
 
-        SliderItem sliderItem = mSliderItems.get(position);
+        final SliderItem sliderItem = mSliderItems.get(position);
 
-        viewHolder.textViewDescription.setText(sliderItem.getDescription());
-        viewHolder.textViewDescription.setTextSize(16);
-        viewHolder.textViewDescription.setTextColor(Color.WHITE);
-        Picasso.get().load(sliderItem.getImageUrl()).resize(200,230)
-                .into(viewHolder.imageViewBackground);
-        Picasso.Builder builder = new Picasso.Builder(context);
-        builder.listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-     //           Toast.makeText(context, "Image Error " +exception.toString(), Toast.LENGTH_SHORT).show();
 
-            }
-        });
+//        Picasso.get().load(sliderItem.getImageUrl()).resize(200,230)
+//                .into(viewHolder.imageViewBackground);
+//        Picasso.Builder builder = new Picasso.Builder(context);
+//        builder.listener(new Picasso.Listener() {
+//            @Override
+//            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+//     //           Toast.makeText(context, "Image Error " +exception.toString(), Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
 
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        Picasso.get().load(Constant.sliderImageBase+sliderItem.getImageUrl());
+        Log.d("slider_img",Constant.sliderImageBase+sliderItem.getImageUrl());
+
+        viewHolder.offerDetailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-       //         Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(context, OfferDetails.class);
+                i.putExtra("id",String.valueOf(sliderItem.getId()));
+                i.putExtra("title",sliderItem.getTitle());
+                i.putExtra("price",sliderItem.getPrice());
+                i.putExtra("desc",sliderItem.getDescription());
+                i.putExtra("url",sliderItem.getImageUrl());
+                context.startActivity(i);
             }
         });
     }
@@ -74,13 +86,13 @@ public class SliderAdapter extends
         View itemView;
         ImageView imageViewBackground;
         ImageView imageGifContainer;
-        TextView textViewDescription;
+        TextView textViewDescription,tvPrice,tvTitle;
+        Button offerDetailsBtn;
 
         SliderAdapterVH(View itemView) {
             super(itemView);
             imageViewBackground = itemView.findViewById(R.id.iv_auto_image_slider);
-            imageGifContainer = itemView.findViewById(R.id.iv_gif_container);
-            textViewDescription = itemView.findViewById(R.id.tv_auto_image_slider);
+            offerDetailsBtn = itemView.findViewById(R.id.offerDetailsId);
             this.itemView = itemView;
         }
     }

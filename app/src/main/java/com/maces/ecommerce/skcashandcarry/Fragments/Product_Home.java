@@ -577,15 +577,24 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
                 Sliders jsonPostService = retrofit.create(Sliders.class);
-                Call<JsonObject> call = jsonPostService.ApiName(headers);
-                call.enqueue(new Callback<JsonObject>() {
+                Call<JsonArray> call = jsonPostService.ApiName(headers);
+                call.enqueue(new Callback<JsonArray>() {
                     @Override
-                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                        Log.d("sliders", String.valueOf(response.code()));
+                    public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+                        Log.d("sliders_status", String.valueOf(response));
+                        if (response.isSuccessful())
+                        {
+                            if (response.body()!=null)
+                            {
+                                Log.d("sliders_body", response.body().toString());
+                                String jsonresponse = response.body().toString();
+                                parse_Slider(jsonresponse);
+                            }
+                        }
                     }
 
                     @Override
-                    public void onFailure(Call<JsonObject> call, Throwable t) {
+                    public void onFailure(Call<JsonArray> call, Throwable t) {
                         progressDialog.dismiss();
                         Toast.makeText(getContext(), "" + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -654,15 +663,37 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     }
 
     private void parse_Slider(String response) {
-        String url;
+        String url,price,description,title;
+        int id;
+
         try {
-            JSONObject jsonObject = new JSONObject(response);
-            JSONArray jsonarray = jsonObject.getJSONArray("slider-images");
+            JSONArray jsonarray = new JSONArray(response);
+
+            Log.d("jsonArray",String.valueOf(jsonarray));
+
+            //JSONObject jsonObject = new JSONObject(response);
+           // JSONArray jsonarray = jsonObject.getJSONArray("slider-images");
+
             for (int i = 0; i < jsonarray.length(); i++) {
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
+
+                //getting
                 SliderItem sliderItem = new SliderItem();
-                url = jsonobject.getString("product_image");
-                sliderItem.setImageUrl("https://skcc.luqmansoftwares.com/uploads/products/" + url);
+                url = jsonobject.getString("banner_image");
+                title = jsonobject.getString("title");
+                price = jsonobject.getString("price");
+                description = jsonobject.getString("description");
+                id = jsonobject.getInt("id");
+
+                Log.d("idStr", String.valueOf(id));
+
+                //setting
+                sliderItem.setId(id);
+                sliderItem.setTitle(title);
+                sliderItem.setPrice(price);
+                sliderItem.setDescription(description);
+                //sliderItem.setImageUrl("https://skcc.luqmansoftwares.com/uploads/products/" + url);
+                sliderItem.setImageUrl(url);
                 sliderItemList.add(sliderItem);
             }
             adapter = new SliderAdapter(getActivity(), sliderItemList);

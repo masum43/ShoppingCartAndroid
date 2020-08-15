@@ -66,7 +66,7 @@
             <LinearLayout
                 android:id="@+id/layout_slider"
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
+                android:layout_height="@dimen/_200sdp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"

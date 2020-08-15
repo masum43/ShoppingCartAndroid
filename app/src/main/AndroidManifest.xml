@@ -8,24 +8,25 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/app_icon"
         android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:hardwareAccelerated="false"
-        android:roundIcon="@drawable/app_icon"
         android:largeHeap="true"
+        android:launchMode="singleTop"
+        android:roundIcon="@drawable/app_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="stateHidden"
         tools:targetApi="m">
+        <activity android:name=".OfferDetails"></activity>
         <activity
-            android:name="com.maces.ecommerce.skcashandcarry.View.order_product_detail"
-            android:theme="@style/Product"></activity>
-        <activity
-            android:name="com.maces.ecommerce.skcashandcarry.View.Category_Product"
+            android:name=".View.order_product_detail"
             android:theme="@style/Product" />
-        <activity android:name="com.maces.ecommerce.skcashandcarry.View.Splash">
+        <activity
+            android:name=".View.Category_Product"
+            android:theme="@style/Product" />
+        <activity android:name=".View.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,23 +34,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.maces.ecommerce.skcashandcarry.View.ForgotPassword"
+            android:name=".View.ForgotPassword"
             android:theme="@style/Product" />
-        <activity android:name="com.maces.ecommerce.skcashandcarry.View.order_placed" />
+        <activity android:name=".View.order_placed" />
         <activity
-            android:name="com.maces.ecommerce.skcashandcarry.View.Product_Detail"
+            android:name=".View.Product_Detail"
             android:theme="@style/Product" />
-        <activity android:name="com.maces.ecommerce.skcashandcarry.View.Payment_Screen" />
+        <activity android:name=".View.Payment_Screen" />
         <activity
-            android:name="com.maces.ecommerce.skcashandcarry.View.Register"
+            android:name=".View.Register"
             android:theme="@style/Product" />
         <activity
-            android:name="com.maces.ecommerce.skcashandcarry.View.Home"
+            android:name=".View.Home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.maces.ecommerce.skcashandcarry.View.Login" />
-        <activity android:name="com.maces.ecommerce.skcashandcarry.MainActivity" />
+        <activity android:name=".View.Login" />
+        <activity android:name=".MainActivity" />
         <activity
-            android:name="com.maces.ecommerce.skcashandcarry.View.CartActivity"
+            android:name=".View.CartActivity"
             android:theme="@style/AppTheme" />
     </application>
 

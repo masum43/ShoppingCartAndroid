@@ -1,5 +1,6 @@
 package com.maces.ecommerce.skcashandcarry.Interfaces;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.Map;
@@ -15,7 +16,7 @@ public interface Sliders {
     String URL="https://skcc.luqmansoftwares.com/api/auth/";
     @Headers("Content-Type: application/json")
     @GET("fetch-offers")
-    Call<JsonObject> ApiName(@HeaderMap Map<String, String> headers);
+    Call<JsonArray> ApiName(@HeaderMap Map<String, String> headers);
 
 
 
