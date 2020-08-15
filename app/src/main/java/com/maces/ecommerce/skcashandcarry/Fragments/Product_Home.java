@@ -130,7 +130,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     private static final int PAGE_START = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private int TOTAL_PAGES = 5;
+    private int TOTAL_PAGES = 4;
     private int currentPage = PAGE_START;
 
     private LinearLayout mLinearLayout;
@@ -227,9 +227,14 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())
                 {
-                    currentPage++;
-                    loadNextPage();
-                    Log.d("PPP",String.valueOf(currentPage));
+                    if (currentPage<TOTAL_PAGES)
+                    {
+                        currentPage++;
+                        loadNextPage();
+                        Log.d("PPP",String.valueOf(currentPage));
+                    }
+                    else progressBar.setVisibility(View.GONE);
+
                 }
             }
         });
@@ -719,10 +724,6 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     public void onBackPressed() {
         Objects.requireNonNull(getActivity()).finish();
     }
-
-
-
-
 
 
     private void loadNextPage() {

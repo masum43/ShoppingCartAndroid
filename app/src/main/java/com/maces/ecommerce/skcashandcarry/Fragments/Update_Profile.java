@@ -34,6 +34,7 @@ import com.google.gson.JsonObject;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Get_UserInfor;
 import com.maces.ecommerce.skcashandcarry.Model.MyErrorMessage;
 import com.maces.ecommerce.skcashandcarry.Model.ProductService;
+import com.maces.ecommerce.skcashandcarry.MySharedPref;
 import com.maces.ecommerce.skcashandcarry.R;
 import com.maces.ecommerce.skcashandcarry.View.Login;
 
@@ -62,11 +63,12 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
     private SharedPreferences prf;
     private String name, email, business_name, mobile_number, business_address;
     Spinner spinner;
-    private ArrayList<String> allCityList;
     private String city_name;
     private int city_id;
     private String city_response;
     private TextView cityNameTv;
+
+    private ArrayList<String> allCityList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,11 +96,13 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
 
 
         spinner = (Spinner) root.findViewById(R.id.spinner);
+        prepareCityDropDown();
 
         // Spinner click listener
         spinner.setOnItemSelectedListener(this);
 
-        prepareCityDropDown();
+        //spinner.setPrompt(MySharedPref.getCityName(getContext()));
+
 
 
         Get_Userinfo();
@@ -280,8 +284,8 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
                         Business.setText("" + business_name);
 
                         city_response = response.body().get("city").getAsString();
-                        city_id = Integer.parseInt(city_response);
-                        cityNameTv.setText(city_response);
+                        //city_id = Integer.parseInt(city_response);
+                        cityNameTv.setText(MySharedPref.getCityName(getContext()));
 
                     } else {
                         getProgressDialog.dismiss();
@@ -324,16 +328,17 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
     }
 
     private void prepareCityDropDown() {
+        allCityList.add(MySharedPref.getCityName(getContext()));
         getAllCityList();
         // Spinner element
 
 
-
+        //Log.d("city",allCityList.get(0));
         // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, allCityList);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, allCityList);
 
         // Drop down layout style - list view with radio button
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // attaching data adapter to spinner
         spinner.setAdapter(dataAdapter);
@@ -352,7 +357,7 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
         // TODO Auto-generated method stub
     }
 
-    public ArrayList<String> getAllCityList() {
+    private void getAllCityList() {
 //        BackgroundApiTask backgroundApiTask = new BackgroundApiTask(context);
 //        myDatabaseSource = new MyDatabaseSource(context);
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
@@ -360,7 +365,7 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
         final String savedata = "postData";
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.POST,
+                Request.Method.GET,
                 "https://skcc.luqmansoftwares.com/api/fetch-cities",
                 null,
                 new com.android.volley.Response.Listener<JSONArray>() {
@@ -416,7 +421,6 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
         requestQueue.add(jsonArrayRequest);
 
 
-        return allCityList;
-
     }
+
 }

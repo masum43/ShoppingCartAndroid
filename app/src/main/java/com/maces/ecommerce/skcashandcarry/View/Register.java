@@ -26,9 +26,9 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.JsonObject;
-import com.maces.ecommerce.skcashandcarry.Adapter.Category_ProductAdapter;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Register_User;
 import com.maces.ecommerce.skcashandcarry.Model.ServiceGenerator;
+import com.maces.ecommerce.skcashandcarry.MySharedPref;
 import com.maces.ecommerce.skcashandcarry.R;
 
 import org.json.JSONArray;
@@ -37,11 +37,9 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fr.ganfra.materialspinner.MaterialSpinner;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -170,7 +168,7 @@ public class Register extends AppCompatActivity implements AdapterView.OnItemSel
                     tvaddress.setError(getResources().getString(R.string.correct_address));
                     tvaddress.setFocusable(true);
                 }
-                else if (cityNameTv.getText().toString().equals("Select City"))
+                else if (city_id == 0)
                 {
                     Toast.makeText(Register.this, "Please Select City!", Toast.LENGTH_SHORT).show();
                 }
@@ -219,6 +217,7 @@ public class Register extends AppCompatActivity implements AdapterView.OnItemSel
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 try{
                     if (response.isSuccessful()) {
+                        MySharedPref.putCityName(Register.this,city_name);
                         progressDialog.dismiss();
                         Toast.makeText(Register.this, ""+response.body().get("message"), Toast.LENGTH_LONG).show(); // do something with that
                         Intent newIntent=new Intent(Register.this,Login.class);
@@ -299,6 +298,7 @@ return false;
     }
 
     private void prepareCityDropDown() {
+
         getAllCityList();
         // Spinner element
         Spinner spinner = (Spinner) findViewById(R.id.spinner);
@@ -307,8 +307,9 @@ return false;
         spinner.setOnItemSelectedListener(this);
 
 
+        Log.d("city",allCityList.get(0));
         // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, allCityList);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, allCityList);
 
         // Drop down layout style - list view with radio button
         //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -333,15 +334,16 @@ return false;
         return str;
     }
 
-    public ArrayList<String> getAllCityList() {
+    private void getAllCityList() {
 //        BackgroundApiTask backgroundApiTask = new BackgroundApiTask(context);
 //        myDatabaseSource = new MyDatabaseSource(context);
+        allCityList.add("Select City");
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         final String savedata = "postData";
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.POST,
+                Request.Method.GET,
                 "https://skcc.luqmansoftwares.com/api/fetch-cities",
                 null,
                 new com.android.volley.Response.Listener<JSONArray>() {
@@ -397,8 +399,6 @@ return false;
         requestQueue.add(jsonArrayRequest);
 
 
-        return allCityList;
-
     }
 
     @Override
@@ -406,9 +406,6 @@ return false;
         // On selecting a spinner item
         city_name = parent.getItemAtPosition(position).toString();
         city_id = position;
-
-        // Showing selected spinner item
-        Toast.makeText(parent.getContext(), "Selected: " + String.valueOf(position), Toast.LENGTH_LONG).show();
     }
     public void onNothingSelected(AdapterView<?> arg0) {
         // TODO Auto-generated method stub

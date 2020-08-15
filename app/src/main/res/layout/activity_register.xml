@@ -113,7 +113,6 @@
             android:imeOptions="actionNext"
             android:maxLines="1"
 
-
             android:singleLine="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -153,11 +152,12 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:padding="10dip"
+            android:paddingTop="@dimen/_5sdp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
             <TextView
+                android:visibility="gone"
                 android:id="@+id/city_name_tv"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -170,6 +170,11 @@
                 android:id="@+id/spinner"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#63000000"
                 />
 
         </LinearLayout>

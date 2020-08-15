@@ -41,6 +41,21 @@ public static void putToken(Context context, String value)
 
     }
 
+    public static void putCityName(Context context, String value)
+    {
+        try {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+            myEdit.putString("city_name", value);
+            myEdit.apply();
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(context, ""+e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
 public static String getToken(Context context)
 {
     SharedPreferences sh = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
@@ -54,6 +69,15 @@ public static String getToken(Context context)
     {
         SharedPreferences sh = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
         String s1 = sh.getString("access_token_type", "");
+
+        return s1;
+
+    }
+
+    public static String getCityName(Context context)
+    {
+        SharedPreferences sh = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        String s1 = sh.getString("city_name", "");
 
         return s1;
 
