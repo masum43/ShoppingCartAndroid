@@ -57,7 +57,7 @@ public class SliderAdapter extends
 //            }
 //        });
 
-        Picasso.get().load(Constant.sliderImageBase+sliderItem.getImageUrl());
+        Picasso.get().load(Constant.sliderImageBase+sliderItem.getImageUrl()).into(viewHolder.imageViewBackground);
         Log.d("slider_img",Constant.sliderImageBase+sliderItem.getImageUrl());
 
         viewHolder.offerDetailsBtn.setOnClickListener(new View.OnClickListener() {
