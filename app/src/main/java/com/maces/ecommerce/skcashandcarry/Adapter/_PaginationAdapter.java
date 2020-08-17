@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -37,6 +38,8 @@ import com.maces.ecommerce.skcashandcarry.View.CartActivity;
 import com.maces.ecommerce.skcashandcarry.View.Category_Product;
 import com.maces.ecommerce.skcashandcarry.View.Home;
 import com.maces.ecommerce.skcashandcarry.View.Product_Detail;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -97,12 +100,12 @@ public class _PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int i) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
 
         Movie movie = movieList.get(i);
         switch (getItemViewType(i)) {
             case ITEM:
-                MovieViewHolder movieViewHolder = (MovieViewHolder) holder;
+                final MovieViewHolder movieViewHolder = (MovieViewHolder) holder;
                 movieViewHolder.productName.setText(movieList.get(i).getName());
                 movieViewHolder.tvProduct_Brand.setText(movieList.get(i).getBrand());
                 if (movieList.get(i).getWeight().equals("null")) {
@@ -130,7 +133,29 @@ public class _PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         context.startActivity(product_intent);
                     }
                 });
-                Picasso.get().load(movieList.get(i).getProduct_image()).into(movieViewHolder.icon);
+                //Picasso.get().load(movieList.get(i).getProduct_image()).into(movieViewHolder.icon);
+                Picasso.get()
+                        .load(movieList.get(i).getProduct_image())
+                        .networkPolicy(NetworkPolicy.OFFLINE)
+                        .into(movieViewHolder.icon, new Callback() {
+                            @Override
+                            public void onSuccess() {
+
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                // Try again online if cache failed
+                                Picasso.get()
+                                        .load(movieList.get(i).getProduct_image())
+                                        //.placeholder(R.drawable.user_placeholder)
+                                        //.error(R.drawable.user_placeholder_error)
+                                        .into(movieViewHolder.icon);
+                            }
+                        });
+
+
+
                 movieViewHolder.tvProduct_addtoCart.setOnClickListener(new View.OnClickListener() {
 
                     @Override

@@ -134,7 +134,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     private static final int PAGE_START = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private int TOTAL_PAGES = 4;
+    private int TOTAL_PAGES = 8;
     private int currentPage = PAGE_START;
 
     private LinearLayout mLinearLayout;
@@ -144,6 +144,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     //as
     private NestedScrollView nestedScrollView;
     RecyclerView searchRv;
+    public static boolean lastPagReached = false;
 
 
     @Override
@@ -204,8 +205,6 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
         productRecyclerView = root.findViewById(R.id.grid_products);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         _paginationAdapter = new _PaginationAdapter(getActivity(), this);
-
-
         productRecyclerView.setLayoutManager(linearLayoutManager);
         productRecyclerView.setAdapter(_paginationAdapter);
 
@@ -236,9 +235,12 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                 {
                     //if (currentPage<TOTAL_PAGES)
                     //{
-                        currentPage++;
+                    if (!lastPagReached)
+                    {
                         loadNextPage();
                         Log.d("PPP",String.valueOf(currentPage));
+                    }
+
                     //}
                     //else progressBar.setVisibility(View.GONE);
 
@@ -651,11 +653,14 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
 
     private void loadNextPage() {
-        if (currentPage >1)
+//        if (currentPage !=2)
+        productRecyclerView.setNestedScrollingEnabled(false);
+        currentPage++;
+        if (currentPage >1 && currentPage <= TOTAL_PAGES)
         {
             Log.d("HHH","yes");
             progressBar.setVisibility(View.VISIBLE);
-            Log.d("current_page", String.valueOf(currentPage));
+
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl("https://skcc.luqmansoftwares.com/api/fetch-products"+ "/?page=" + currentPage)
                     .addConverterFactory(ScalarsConverterFactory.create())
@@ -674,122 +679,140 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                     List<Movie> tempresults = new ArrayList<>();
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().toString());
-                        JSONArray jsonarray = jsonObject.getJSONArray("data");
-                        if (jsonarray.length() > 0) {
-                            for (int i = 0; i < jsonarray.length(); i++) {
-                                JSONObject jsonobject = jsonarray.getJSONObject(i);
-                                Movie product_class = new Movie();
+                        int to = jsonObject.getInt("to");
+                        Log.d("current_page", String.valueOf(currentPage));
+                        Log.d("current_to", String.valueOf(to));
+                        if (!String.valueOf(to).equals("null"))
+                        {
+                            JSONArray jsonarray = jsonObject.getJSONArray("data");
+                            if (jsonarray.length() > 1) {
+                                for (int i = 0; i < jsonarray.length(); i++) {
+                                    JSONObject jsonobject = jsonarray.getJSONObject(i);
+                                    Movie product_class = new Movie();
 
-                                id = jsonobject.getInt("id");
-                                product_class.setId(id);
-                                name = jsonobject.getString("name");
-                                product_class.setName(name);
-                                category_id = jsonobject.getString("category_id");
-                                product_class.setCategory_id(category_id);
-                                description = jsonobject.getString("description");
-                                if (description.equals("null")) {
-                                    product_class.setDescription(" ");
-                                } else {
-                                    product_class.setDescription(description);
-                                }
+                                    id = jsonobject.getInt("id");
+                                    product_class.setId(id);
+                                    name = jsonobject.getString("name");
+                                    product_class.setName(name);
+                                    category_id = jsonobject.getString("category_id");
+                                    product_class.setCategory_id(category_id);
+                                    description = jsonobject.getString("description");
+                                    if (description.equals("null")) {
+                                        product_class.setDescription(" ");
+                                    } else {
+                                        product_class.setDescription(description);
+                                    }
 
-                                weight = jsonobject.getString("weight");
-                                if (weight.equals("null")) {
-                                    product_class.setWeight(" ");
-                                } else {
-                                    product_class.setWeight(weight);
-                                }
+                                    weight = jsonobject.getString("weight");
+                                    if (weight.equals("null")) {
+                                        product_class.setWeight(" ");
+                                    } else {
+                                        product_class.setWeight(weight);
+                                    }
 
-                                size = jsonobject.getString("size");
-                                if (size.equals("null")) {
-                                    product_class.setSize("");
-                                } else {
-                                    product_class.setSize(size);
-                                }
+                                    size = jsonobject.getString("size");
+                                    if (size.equals("null")) {
+                                        product_class.setSize("");
+                                    } else {
+                                        product_class.setSize(size);
+                                    }
 
 
-                                switch (price_category) {
-                                    case "normal":
-                                        price = jsonobject.getString("price");
-                                        product_class.setPrice(price);
-                                        break;
-                                    case "p1":
-                                        if (jsonobject.getString("p1").equals("null")) {
+                                    switch (price_category) {
+                                        case "normal":
                                             price = jsonobject.getString("price");
                                             product_class.setPrice(price);
-                                        } else {
-                                            price = jsonobject.getString("p1");
-                                            product_class.setPrice(price);
-                                        }
+                                            break;
+                                        case "p1":
+                                            if (jsonobject.getString("p1").equals("null")) {
+                                                price = jsonobject.getString("price");
+                                                product_class.setPrice(price);
+                                            } else {
+                                                price = jsonobject.getString("p1");
+                                                product_class.setPrice(price);
+                                            }
 
-                                        break;
-                                    case "p2":
-                                        if (jsonobject.getString("p2").equals("null")) {
-                                            price = jsonobject.getString("price");
-                                            product_class.setPrice(price);
-                                        } else {
-                                            price = jsonobject.getString("p2");
-                                            product_class.setPrice(price);
-                                        }
-                                        break;
-                                    case "p3":
-                                        if (jsonobject.getString("p3").equals("null")) {
-                                            price = jsonobject.getString("price");
-                                            product_class.setPrice(price);
-                                        } else {
-                                            price = jsonobject.getString("p3");
-                                            product_class.setPrice(price);
-                                        }
-                                        break;
-                                    case "p4":
-                                        if (jsonobject.getString("p4").equals("null")) {
-                                            price = jsonobject.getString("price");
-                                            product_class.setPrice(price);
-                                        } else {
-                                            price = jsonobject.getString("p4");
-                                            product_class.setPrice(price);
-                                        }
-
-
-                                        break;
-                                    case "p5":
-                                        if (jsonobject.getString("p5").equals("null")) {
-                                            price = jsonobject.getString("price");
-                                            product_class.setPrice(price);
-                                        } else {
-                                            price = jsonobject.getString("p5");
-                                            product_class.setPrice(price);
-                                        }
+                                            break;
+                                        case "p2":
+                                            if (jsonobject.getString("p2").equals("null")) {
+                                                price = jsonobject.getString("price");
+                                                product_class.setPrice(price);
+                                            } else {
+                                                price = jsonobject.getString("p2");
+                                                product_class.setPrice(price);
+                                            }
+                                            break;
+                                        case "p3":
+                                            if (jsonobject.getString("p3").equals("null")) {
+                                                price = jsonobject.getString("price");
+                                                product_class.setPrice(price);
+                                            } else {
+                                                price = jsonobject.getString("p3");
+                                                product_class.setPrice(price);
+                                            }
+                                            break;
+                                        case "p4":
+                                            if (jsonobject.getString("p4").equals("null")) {
+                                                price = jsonobject.getString("price");
+                                                product_class.setPrice(price);
+                                            } else {
+                                                price = jsonobject.getString("p4");
+                                                product_class.setPrice(price);
+                                            }
 
 
-                                        break;
+                                            break;
+                                        case "p5":
+                                            if (jsonobject.getString("p5").equals("null")) {
+                                                price = jsonobject.getString("price");
+                                                product_class.setPrice(price);
+                                            } else {
+                                                price = jsonobject.getString("p5");
+                                                product_class.setPrice(price);
+                                            }
+
+
+                                            break;
+                                    }
+                                    brand_id = jsonobject.getString("brand_id");
+                                    if (!brand_id.equals("null")) {
+                                        brand = jsonobject.getJSONObject("brand").getString("name");
+                                        product_class.setBrand(brand);
+                                    } else {
+                                        product_class.setBrand("");
+                                    }
+                                    product_image = jsonobject.getString("product_image");
+                                    product_class.setProduct_image("https://skcc.luqmansoftwares.com/uploads/products/" + product_image);
+                                    results.add(product_class);
+                                    //searchAl.add(product_class);
                                 }
-                                brand_id = jsonobject.getString("brand_id");
-                                if (!brand_id.equals("null")) {
-                                    brand = jsonobject.getJSONObject("brand").getString("name");
-                                    product_class.setBrand(brand);
-                                } else {
-                                    product_class.setBrand("");
-                                }
-                                product_image = jsonobject.getString("product_image");
-                                product_class.setProduct_image("https://skcc.luqmansoftwares.com/uploads/products/" + product_image);
-                                results.add(product_class);
-                                searchAl.add(product_class);
-                            }
 
-                            _paginationAdapter.addAll(results);
-                            if (currentPage != TOTAL_PAGES)
+                                _paginationAdapter.addAll(results);
+                                //if (currentPage != TOTAL_PAGES)
+                                  //  _paginationAdapter.addLoadingFooter();
+                                //else isLastPage = true;
+                                //country.addAll(results);
                                 _paginationAdapter.addLoadingFooter();
-                            else isLastPage = true;
-                            country.addAll(results);
-                            _paginationAdapter.stop_progress();
-                            nn++;
+                                _paginationAdapter.stop_progress();
+                                progressBar.setVisibility(View.GONE);
+                                nn++;
 
-                        } else {
-                            _paginationAdapter.stop_progress();
-                            progressBar.setVisibility(View.GONE);
-                            //    Toast.makeText(getActivity(), getResources().getString(R.string.no_pro), Toast.LENGTH_SHORT).show();
+                            } else {
+                                lastPagReached = true;
+                                _paginationAdapter.stop_progress();
+                                progressBar.setVisibility(View.GONE);
+                                //    Toast.makeText(getActivity(), getResources().getString(R.string.no_pro), Toast.LENGTH_SHORT).show();
+                            }
                         }
+                        else
+                        {
+                            lastPagReached = true;
+                            progressBar.setVisibility(View.GONE);
+                            tv_no.setVisibility(View.VISIBLE);
+                            tv_no.setText("No more product found!");
+                        }
+
+
                     } catch (JSONException e) {
                         progressBar.setVisibility(View.GONE);
                         e.printStackTrace();
@@ -808,10 +831,19 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
         }
 
+        else
+        {
+            _paginationAdapter.stop_progress();
+            progressBar.setVisibility(View.GONE);
+            tv_no.setVisibility(View.VISIBLE);
+            tv_no.setText("No more product to show!!");
+        }
+
     }
 
 
     private void loadFirstPage() {
+        //loadNextPage();
         if (currentPage == 1)
         {
             Log.d("current_page",String.valueOf(currentPage));
@@ -935,8 +967,9 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                         _paginationAdapter.addAll(results);
                         country.addAll(results);
                     }
-                    if (currentPage <= TOTAL_PAGES) _paginationAdapter.addLoadingFooter();
-                    else isLastPage = true;
+                    //if (currentPage <= TOTAL_PAGES)
+                        _paginationAdapter.addLoadingFooter();
+                    //else isLastPage = true;
                     nn++;
                     //        progressDialog.dismiss();
 
@@ -956,7 +989,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
 
     private void filter(String text) {
-        _paginationAdapter.removeLoadingFooter();
+        //_paginationAdapter.removeLoadingFooter();
         searchProduct(getContext(),text);
 
 
