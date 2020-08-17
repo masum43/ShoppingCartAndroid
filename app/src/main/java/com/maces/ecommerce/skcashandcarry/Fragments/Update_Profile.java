@@ -175,6 +175,7 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
         paramObject.addProperty("post_code", PostCode.getText().toString().trim());
         paramObject.addProperty("address", Address.getText().toString());
         paramObject.addProperty("city", city_id);
+        MySharedPref.putCityName(getContext(),city_name);
 
         if (token_type.length() < 1) {
             jsonPostService = ProductService.createService(com.maces.ecommerce.skcashandcarry.Interfaces.Update_Profile.class, "https://skcc.luqmansoftwares.com/api/auth/", Login.token_type_val + " " + Login.access_token_val);
@@ -351,7 +352,7 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
         city_id = position;
 
         // Showing selected spinner item
-        Toast.makeText(parent.getContext(), "Selected: " + String.valueOf(position), Toast.LENGTH_LONG).show();
+        //Toast.makeText(parent.getContext(), "Selected: " + String.valueOf(position), Toast.LENGTH_LONG).show();
     }
     public void onNothingSelected(AdapterView<?> arg0) {
         // TODO Auto-generated method stub

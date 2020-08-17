@@ -51,6 +51,7 @@ import com.maces.ecommerce.skcashandcarry.Adapter.PaginationScrollListener;
 import com.maces.ecommerce.skcashandcarry.Adapter.SearchAdapter;
 import com.maces.ecommerce.skcashandcarry.Adapter.SliderAdapter;
 import com.maces.ecommerce.skcashandcarry.Adapter._PaginationAdapter;
+import com.maces.ecommerce.skcashandcarry.Constant;
 import com.maces.ecommerce.skcashandcarry.Converter;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Fetch_Categories;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Fetch_Categories_Products;
@@ -233,13 +234,13 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())
                 {
-                    if (currentPage<TOTAL_PAGES)
-                    {
+                    //if (currentPage<TOTAL_PAGES)
+                    //{
                         currentPage++;
                         loadNextPage();
                         Log.d("PPP",String.valueOf(currentPage));
-                    }
-                    else progressBar.setVisibility(View.GONE);
+                    //}
+                    //else progressBar.setVisibility(View.GONE);
 
                 }
             }
@@ -575,7 +576,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                 title = jsonobject.getString("title");
                 price = jsonobject.getString("price");
                 description = jsonobject.getString("description");
-                id = jsonobject.getInt("id");
+                id = jsonobject.getInt("product_id");
 
                 Log.d("idStr", String.valueOf(id));
 
@@ -674,7 +675,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().toString());
                         JSONArray jsonarray = jsonObject.getJSONArray("data");
-                        if (jsonarray.length() > 1) {
+                        if (jsonarray.length() > 0) {
                             for (int i = 0; i < jsonarray.length(); i++) {
                                 JSONObject jsonobject = jsonarray.getJSONObject(i);
                                 Movie product_class = new Movie();
@@ -955,7 +956,9 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
 
     private void filter(String text) {
-        //_paginationAdapter.removeLoadingFooter();
+        _paginationAdapter.removeLoadingFooter();
+        searchProduct(getContext(),text);
+
 
 //        String search_url = "https://skcc.luqmansoftwares.com/api/search-product";
 //
@@ -993,45 +996,16 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 //        });
 
 
-        ArrayList<Movie> filteredList = new ArrayList<>();
-        for (Movie item : searchAl) {
-            if (item.getName().toUpperCase().contains(text) ||
-                    item.getName().toLowerCase().contains(text.toLowerCase())) {
-                filteredList.add(item);
-            }
-            Map<String, String> params = new HashMap();
-            params.put("name", text);
-
-            StringRequest parameters = new StringRequest(params);
-
-            StringRequest jsonRequest = new StringRequest(Request.Method.POST,
-                    "https://skcc.luqmansoftwares.com/api/search-product",
-                    parameters,
-                    new com.android.volley.Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    //TODO: handle success
-                    Log.d("search_al",String.valueOf(response));
-                }
-            }, new com.android.volley.Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    error.printStackTrace();
-                    //TODO: handle failure
-                }
-            });
-
-            Volley.newRequestQueue(getContext()).add(jsonRequest);
-
-            SearchAdapter searchAdapter ;
-            final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-            searchAdapter = new SearchAdapter(getActivity(), this);
+//        ArrayList<Movie> filteredList = new ArrayList<>();
+//        for (Movie item : searchAl) {
+//            if (item.getName().toUpperCase().contains(text) ||
+//                    item.getName().toLowerCase().contains(text.toLowerCase())) {
+//                filteredList.add(item);
+//            }
 
 
-            searchRv.setLayoutManager(linearLayoutManager);
-            searchRv.setAdapter(searchAdapter);
 
-            searchAdapter.addAll(filteredList);
+
 //            if (filteredList.size() > 0) {
 //                productRecyclerView.setVisibility(View.VISIBLE);
 //                tv_no.setVisibility(View.GONE);
@@ -1041,7 +1015,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 //                productRecyclerView.setVisibility(View.GONE);
 //                tv_no.setVisibility(View.VISIBLE);
 //            }
-        }
+
     }
 
     public static void hideKeyboard(Activity activity) {
@@ -1055,54 +1029,157 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
         Objects.requireNonNull(imm).hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    //Method--registration to the server
-    public void register(String data) {
 
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-        final String savedata= data;
-        Log.d("register_data",data);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST,
-                "https://skcc.luqmansoftwares.com/api/search-product",
+    private void searchProduct(final Context c, final String data)
+
+    {
+        StringRequest stringRequest=new StringRequest(Request.Method.POST, Constant.searchApi+"?name="+data,
                 new com.android.volley.Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject objres=new JSONObject(response);
-                    Toast.makeText(getContext(),objres.toString(),Toast.LENGTH_LONG).show();
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("saerch",response);
 
-                } catch (JSONException e) {
-                    Toast.makeText(getContext(),"Server Error",Toast.LENGTH_LONG).show();
-                    Log.d("Server Error",e.toString());
-                }
-                Log.d("VOLLEY_1", response);
+                        try {
+                            setSearchAdapter(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new com.android.volley.Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }){
+            protected Map<String,String> getParams() throws AuthFailureError
+            {
+                Map<String,String> params=new HashMap<String, String>();
+                //params.put("name",data);
+                return params;
             }
-        }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-
-                Log.d("VOLLEY_2", error.toString());
-            }
-        }) {
-            @Override
-            public String getBodyContentType() {
-                return "application/json; charset=utf-8";
-            }
-
-            @Override
-            public byte[] getBody() {
-                try {
-                    return savedata == null ? null : savedata.getBytes("utf-8");
-                } catch (UnsupportedEncodingException uee) {
-                    //Log.d("Unsupported Encoding", data);
-                    return null;
-                }
-            }
-
         };
 
+        RequestQueue requestQueue= Volley.newRequestQueue(c);
         requestQueue.add(stringRequest);
+    }
+
+    private void setSearchAdapter(String response) throws JSONException {
+
+        ArrayList<Movie> newSearchFilteAl = new ArrayList<>();
+        newSearchFilteAl.clear();
+        JSONArray jsonarray = new JSONArray(response);
+        if (jsonarray.length() > 1) {
+            for (int i = 0; i < jsonarray.length(); i++) {
+                JSONObject jsonobject = jsonarray.getJSONObject(i);
+                Movie product_class = new Movie();
+
+                int id = jsonobject.getInt("id");
+                product_class.setId(id);
+                name = jsonobject.getString("name");
+                product_class.setName(name);
+                category_id = jsonobject.getString("category_id");
+                product_class.setCategory_id(category_id);
+                description = jsonobject.getString("description");
+                if (description.equals("null")) {
+                    product_class.setDescription(" ");
+                } else {
+                    product_class.setDescription(description);
+                }
+
+                weight = jsonobject.getString("weight");
+                if (weight.equals("null")) {
+                    product_class.setWeight(" ");
+                } else {
+                    product_class.setWeight(weight);
+                }
+
+                size = jsonobject.getString("size");
+                if (size.equals("null")) {
+                    product_class.setSize("");
+                } else {
+                    product_class.setSize(size);
+                }
+
+
+                switch (price_category) {
+                    case "normal":
+                        price = jsonobject.getString("price");
+                        product_class.setPrice(price);
+                        break;
+                    case "p1":
+                        if (jsonobject.getString("p1").equals("null")) {
+                            price = jsonobject.getString("price");
+                            product_class.setPrice(price);
+                        } else {
+                            price = jsonobject.getString("p1");
+                            product_class.setPrice(price);
+                        }
+
+                        break;
+                    case "p2":
+                        if (jsonobject.getString("p2").equals("null")) {
+                            price = jsonobject.getString("price");
+                            product_class.setPrice(price);
+                        } else {
+                            price = jsonobject.getString("p2");
+                            product_class.setPrice(price);
+                        }
+                        break;
+                    case "p3":
+                        if (jsonobject.getString("p3").equals("null")) {
+                            price = jsonobject.getString("price");
+                            product_class.setPrice(price);
+                        } else {
+                            price = jsonobject.getString("p3");
+                            product_class.setPrice(price);
+                        }
+                        break;
+                    case "p4":
+                        if (jsonobject.getString("p4").equals("null")) {
+                            price = jsonobject.getString("price");
+                            product_class.setPrice(price);
+                        } else {
+                            price = jsonobject.getString("p4");
+                            product_class.setPrice(price);
+                        }
+
+
+                        break;
+                    case "p5":
+                        if (jsonobject.getString("p5").equals("null")) {
+                            price = jsonobject.getString("price");
+                            product_class.setPrice(price);
+                        } else {
+                            price = jsonobject.getString("p5");
+                            product_class.setPrice(price);
+                        }
+
+
+                        break;
+                }
+                brand_id = jsonobject.getString("brand_id");
+                if (!brand_id.equals("null")) {
+                    brand = jsonobject.getJSONObject("brand").getString("name");
+                    product_class.setBrand(brand);
+                } else {
+                    product_class.setBrand("");
+                }
+                product_image = jsonobject.getString("product_image");
+                product_class.setProduct_image("https://skcc.luqmansoftwares.com/uploads/products/" + product_image);
+                newSearchFilteAl.add(product_class);
+            }
+
+            SearchAdapter searchAdapter;
+            final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            searchAdapter = new SearchAdapter(getActivity(), this);
+
+
+            searchRv.setLayoutManager(linearLayoutManager);
+            searchRv.setAdapter(searchAdapter);
+
+            searchAdapter.addAll(newSearchFilteAl);
+        }
     }
 }

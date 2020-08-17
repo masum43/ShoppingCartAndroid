@@ -63,13 +63,12 @@ public class SliderAdapter extends
         viewHolder.offerDetailsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(context, OfferDetails.class);
                 i.putExtra("id",String.valueOf(sliderItem.getId()));
                 i.putExtra("title",sliderItem.getTitle());
                 i.putExtra("price",sliderItem.getPrice());
                 i.putExtra("desc",sliderItem.getDescription());
-                i.putExtra("url",sliderItem.getImageUrl());
+                i.putExtra("url",Constant.sliderImageBase+sliderItem.getImageUrl());
                 context.startActivity(i);
             }
         });
