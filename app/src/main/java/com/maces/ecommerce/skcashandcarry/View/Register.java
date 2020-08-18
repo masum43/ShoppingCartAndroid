@@ -218,6 +218,7 @@ public class Register extends AppCompatActivity implements AdapterView.OnItemSel
                 try{
                     if (response.isSuccessful()) {
                         MySharedPref.putCityName(Register.this,city_name);
+                        MySharedPref.putCityId(Register.this,city_id);
                         progressDialog.dismiss();
                         Toast.makeText(Register.this, ""+response.body().get("message"), Toast.LENGTH_LONG).show(); // do something with that
                         Intent newIntent=new Intent(Register.this,Login.class);

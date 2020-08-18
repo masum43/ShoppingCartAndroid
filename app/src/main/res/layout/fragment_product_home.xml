@@ -84,6 +84,7 @@
                 android:visibility="visible">
 
                 <com.smarteist.autoimageslider.SliderView
+                    android:background="#87CEEB"
                     android:id="@+id/imageSlider"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
