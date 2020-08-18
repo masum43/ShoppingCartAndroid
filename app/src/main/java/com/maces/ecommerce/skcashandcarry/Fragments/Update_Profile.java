@@ -64,7 +64,7 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
     private String name, email, business_name, mobile_number, business_address;
     Spinner spinner;
     private String city_name;
-    private int city_id;
+    private int city_id = 0;
     private String city_response;
     private TextView cityNameTv;
 
@@ -153,7 +153,12 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
                     Phone.setError(getResources().getString(R.string.correct_mobile_number));
                     Phone.setFocusable(true);
 
-                } else {
+                }
+                if (city_id == 0)
+                {
+                    city_id = MySharedPref.getCityId(getContext());
+                }
+                else {
                     Update_Profile();
                     hideKeyboard(Objects.requireNonNull(getActivity()));
                 }
@@ -176,6 +181,7 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
         paramObject.addProperty("address", Address.getText().toString());
         paramObject.addProperty("city", city_id);
         MySharedPref.putCityName(getContext(),city_name);
+        MySharedPref.putCityId(getContext(),city_id);
 
         if (token_type.length() < 1) {
             jsonPostService = ProductService.createService(com.maces.ecommerce.skcashandcarry.Interfaces.Update_Profile.class, "https://skcc.luqmansoftwares.com/api/auth/", Login.token_type_val + " " + Login.access_token_val);
