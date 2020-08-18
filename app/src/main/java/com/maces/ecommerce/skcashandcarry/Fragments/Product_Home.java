@@ -46,6 +46,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.maces.ecommerce.skcashandcarry.Adapter.AllProductsAdapter;
 import com.maces.ecommerce.skcashandcarry.Adapter.Categories_Adapter;
 import com.maces.ecommerce.skcashandcarry.Adapter.Category_ProductAdapter;
 import com.maces.ecommerce.skcashandcarry.Adapter.PaginationScrollListener;
@@ -136,7 +137,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private int TOTAL_PAGES = 8;
-    private int currentPage = 0;
+    private int currentPage = PAGE_START;
 
     private LinearLayout mLinearLayout;
     private ArrayList<String> allCityList = new ArrayList<>();
@@ -214,6 +215,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
         productRecyclerView.setLayoutManager(linearLayoutManager);
         productRecyclerView.setAdapter(_paginationAdapter);
 
+
 //        productRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
 //            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -241,29 +243,50 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                 {
                     //if (currentPage<TOTAL_PAGES)
                     //{
-//                    if (!lastPagReached)
-//                    {
-//                        loadNextPage();
-//                        Log.d("PPP",String.valueOf(currentPage));
-//                    }
+                    if (!lastPagReached)
+                    {
+                        loadNextPage();
+                        Log.d("PPP",String.valueOf(currentPage));
+                    }
 
                     //}
                     //else progressBar.setVisibility(View.GONE);
 
                     //loadMoreBtn.setVisibility(View.VISIBLE);
 
-                    loadPages(currentPage);
+                    //loadPages(currentPage);
 
                 }
             }
         });
 
-        loadMoreBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadNextPage();
-            }
-        });
+//        productRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                LinearLayoutManager layoutManager=LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
+//                int totalItemCount = layoutManager.getItemCount();
+//                int lastVisible = layoutManager.findLastVisibleItemPosition();
+//
+//                boolean endHasBeenReached = lastVisible + 5 >= totalItemCount;
+//                if (totalItemCount > 0 && endHasBeenReached) {
+//                    //you have reached to the bottom of your recycler view
+//                    loadNextPage();
+//                }
+//            }
+//        });
+
+
+
+
+
+
+
+//        loadMoreBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                loadNextPage();
+//            }
+//        });
 
 
        /* productRecyclerView.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
@@ -507,8 +530,8 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                         progressDialog.dismiss();
                         assert response.body() != null;
                         price_category = response.body().get("price_category").getAsString();
-                        //loadFirstPage();
-                        loadPages(currentPage);
+                        loadFirstPage();
+                        //loadPages(currentPage);
 
                     } else {
                         progressDialog.dismiss();
@@ -709,30 +732,35 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
                                     id = jsonobject.getInt("id");
                                     product_class.setId(id);
-                                    name = jsonobject.getString("name");
-                                    product_class.setName(name);
-                                    category_id = jsonobject.getString("category_id");
-                                    product_class.setCategory_id(category_id);
-                                    description = jsonobject.getString("description");
-                                    if (description.equals("null")) {
-                                        product_class.setDescription(" ");
-                                    } else {
-                                        product_class.setDescription(description);
-                                    }
+                                    //name = jsonobject.getString("name");
+                                    product_class.setName(validate("name",jsonObject));
+                                    //ategory_id = jsonobject.getString("category_id");
+                                    product_class.setCategory_id(validate("category_id",jsonObject));
 
-                                    weight = jsonobject.getString("weight");
-                                    if (weight.equals("null")) {
-                                        product_class.setWeight(" ");
-                                    } else {
-                                        product_class.setWeight(weight);
-                                    }
+//                                    description = jsonobject.getString("description");
+////                                    if (description.equals("null")) {
+////                                        product_class.setDescription(" ");
+////                                    } else {
+////                                        product_class.setDescription(description);
+////                                    }
+////
+////                                    weight = jsonobject.getString("weight");
+////                                    if (weight.equals("null")) {
+////                                        product_class.setWeight(" ");
+////                                    } else {
+////                                        product_class.setWeight(weight);
+////                                    }
+////
+////                                    size = jsonobject.getString("size");
+////                                    if (size.equals("null")) {
+////                                        product_class.setSize("");
+////                                    } else {
+////                                        product_class.setSize(size);
+////                                    }
 
-                                    size = jsonobject.getString("size");
-                                    if (size.equals("null")) {
-                                        product_class.setSize("");
-                                    } else {
-                                        product_class.setSize(size);
-                                    }
+                                    product_class.setDescription(validate("description",jsonobject));
+                                    product_class.setWeight(validate("weight",jsonobject));
+                                    product_class.setSize(validate("size",jsonobject));
 
 
                                     switch (price_category) {
@@ -833,6 +861,8 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                     } catch (JSONException e) {
                         progressBar.setVisibility(View.GONE);
                         e.printStackTrace();
+                        Toast.makeText(getContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.d("error_server",e.getMessage());
                     }
 
                 }
@@ -841,6 +871,8 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                 public void onFailure(Call<String> call, Throwable t) {
                     _paginationAdapter.stop_progress();
                     progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), ""+t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d("error_server",t.getMessage());
                 }
             });
 
@@ -891,12 +923,16 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                             product_class.setName(name);
                             category_id = jsonobject.getString("category_id");
                             product_class.setCategory_id(category_id);
-                            description = jsonobject.getString("description");
-                            product_class.setDescription(description);
-                            weight = jsonobject.getString("weight");
-                            product_class.setWeight(weight);
-                            size = jsonobject.getString("size");
-                            product_class.setSize(size);
+                            //description = jsonobject.getString("description");
+                            //product_class.setDescription(description);
+                            //weight = jsonobject.getString("weight");
+                            //product_class.setWeight(weight);
+                            //size = jsonobject.getString("size");
+                            //product_class.setSize(size);
+
+                            product_class.setDescription(validate("description",jsonobject));
+                            product_class.setWeight(validate("weight",jsonobject));
+                            product_class.setSize(validate("size",jsonobject));
 
                             if (price_category.equals("normal")) {
                                 price = jsonobject.getString("price");
@@ -1029,26 +1065,9 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                                 category_id = jsonobject.getString("category_id");
                                 product_class.setCategory_id(category_id);
 
-
-                                if (jsonobject.getString("description").equals("null"))
-                                    description = "";
-                                else
-                                    description = jsonobject.getString("description");
-                                validate("description",jsonobject);
-                                product_class.setDescription(description);
-
-
-
-                                if (jsonobject.getString("weight").equals("null"))
-                                    weight="";
-                                else
-                                    weight = jsonobject.getString("weight");
-                                product_class.setWeight(weight);
-
-
-
-                                size = jsonobject.getString("size");
-                                product_class.setSize(size);
+                                product_class.setDescription(validate("description",jsonobject));
+                                product_class.setWeight(validate("weight",jsonobject));
+                                product_class.setSize(validate("size",jsonobject));
 
                                 if (price_category.equals("normal")) {
                                     price = jsonobject.getString("price");
@@ -1108,8 +1127,12 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                                 product_image = jsonobject.getString("product_image");
                                 product_class.setProduct_image("https://skcc.luqmansoftwares.com/uploads/products/" + product_image);
                                 results.add(product_class);
-                                searchAl.add(product_class);
                             }
+
+
+
+
+
                         } catch (JSONException e) {
                             progressBar.setVisibility(View.GONE);
                             e.printStackTrace();
@@ -1137,7 +1160,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     private String validate(String value, JSONObject jsonObject) throws JSONException {
         String validatedValue="";
         if (!jsonObject.getString(value).equals("null"))
-            validatedValue = jsonObject.getString("description");
+            validatedValue = jsonObject.getString(value);
         return validatedValue;
     }
 
@@ -1145,64 +1168,6 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     private void filter(String text) {
         //_paginationAdapter.removeLoadingFooter();
         searchProduct(getContext(),text);
-
-
-//        String search_url = "https://skcc.luqmansoftwares.com/api/search-product";
-//
-//        HashMap<String, String> headers = new HashMap<String, String>();
-//        headers.put("Accept", "application/json");
-//        headers.put("Authorization", MySharedPref.getTokenType(getContext()) + " " + MySharedPref.getToken(getContext()));
-//
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(Search.URL)
-//                .addConverterFactory(ScalarsConverterFactory.create())
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//        Search jsonPostService = retrofit.create(Search.class);
-//        Call<String> call = jsonPostService.ApiName(headers);
-//        call.enqueue(new Callback<String>() {
-//            @Override
-//            public void onResponse(Call<String> call, Response<String> response) {
-//                Log.d("search_status", String.valueOf(response));
-////                if (response.isSuccessful())
-////                {
-////                    if (response.body()!=null)
-////                    {
-////                        Log.d("sliders_body", response.body().toString());
-////                        String jsonresponse = response.body().toString();
-////                        //parse_Slider(jsonresponse);
-////                    }
-////                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<String> call, Throwable t) {
-//                progressDialog.dismiss();
-//                Toast.makeText(getContext(), "" + t.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-
-//        ArrayList<Movie> filteredList = new ArrayList<>();
-//        for (Movie item : searchAl) {
-//            if (item.getName().toUpperCase().contains(text) ||
-//                    item.getName().toLowerCase().contains(text.toLowerCase())) {
-//                filteredList.add(item);
-//            }
-
-
-
-
-//            if (filteredList.size() > 0) {
-//                productRecyclerView.setVisibility(View.VISIBLE);
-//                tv_no.setVisibility(View.GONE);
-//                _paginationAdapter.filterList(filteredList);
-//
-//            } else {
-//                productRecyclerView.setVisibility(View.GONE);
-//                tv_no.setVisibility(View.VISIBLE);
-//            }
-
     }
 
     public static void hideKeyboard(Activity activity) {
