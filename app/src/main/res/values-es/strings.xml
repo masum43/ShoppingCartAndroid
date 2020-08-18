@@ -153,4 +153,6 @@
     <string name="cannotplace">No se puede realizar el pedido</string>
     <string name="addto">Añadir al carrito</string>
     <string name="goback">Regresa</string>
+
+    <string name="add_to_cart">Añadir al carrito</string>
 </resources>

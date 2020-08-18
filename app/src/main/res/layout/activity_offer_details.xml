@@ -101,7 +101,7 @@
                 android:lines="1"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
-                android:text="Add to Cart"
+                android:text="@string/add_to_cart"
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
                 android:textSize="17dp"
