@@ -26,6 +26,15 @@ public static void putToken(Context context, String value)
 
 }
 
+    public static String getToken(Context context)
+    {
+        SharedPreferences sh = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        String s1 = sh.getString("access_token", "");
+
+        return s1;
+
+    }
+
     public static void putTokenType(Context context, String value)
     {
         try {
@@ -38,6 +47,15 @@ public static void putToken(Context context, String value)
         {
             Toast.makeText(context, ""+e.toString(), Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    public static String getTokenType(Context context)
+    {
+        SharedPreferences sh = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        String s1 = sh.getString("access_token_type", "");
+
+        return s1;
 
     }
 
@@ -56,28 +74,37 @@ public static void putToken(Context context, String value)
 
     }
 
-public static String getToken(Context context)
-{
-    SharedPreferences sh = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
-    String s1 = sh.getString("access_token", "");
-
-    return s1;
-
-}
-
-    public static String getTokenType(Context context)
-    {
-        SharedPreferences sh = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        String s1 = sh.getString("access_token_type", "");
-
-        return s1;
-
-    }
 
     public static String getCityName(Context context)
     {
         SharedPreferences sh = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
         String s1 = sh.getString("city_name", "");
+
+        return s1;
+
+    }
+
+
+    public static void putCityId(Context context, int value)
+    {
+        try {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+            myEdit.putInt("city_id", value);
+            myEdit.apply();
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(context, ""+e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
+    public static int getCityId(Context context)
+    {
+        SharedPreferences sh = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        int s1 = sh.getInt("city_id", 0);
 
         return s1;
 
