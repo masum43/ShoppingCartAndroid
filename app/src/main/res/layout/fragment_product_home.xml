@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -84,7 +85,6 @@
                 android:visibility="visible">
 
                 <com.smarteist.autoimageslider.SliderView
-                    android:background="#87CEEB"
                     android:id="@+id/imageSlider"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -203,31 +203,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:visibility="gone" />
-
-                <androidx.cardview.widget.CardView
-                    android:visibility="gone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:cardElevation="@dimen/_10sdp"
-                    app:cardCornerRadius="@dimen/_10sdp"
-                    app:cardBackgroundColor="@color/colorPrimaryDark"
-                    android:layout_gravity="end"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    >
-
-                    <Button
-                        android:id="@+id/loadMoreBtn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/_30sdp"
-                        android:layout_marginStart="@dimen/_10sdp"
-                        android:layout_marginEnd="@dimen/_10sdp"
-                        android:background="@android:color/transparent"
-                        android:fontFamily="@font/aclonica"
-                        android:text="Load More......"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF" />
-                </androidx.cardview.widget.CardView>
-
 
                 <TextView
                     android:id="@+id/tv_no"

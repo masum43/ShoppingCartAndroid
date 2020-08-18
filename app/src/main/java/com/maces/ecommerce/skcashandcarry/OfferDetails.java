@@ -47,6 +47,8 @@ public class OfferDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offer_details);
 
+        //cart_class = context.getSharedPreferences("Cart", MODE_PRIVATE);
+
         iv = findViewById(R.id.iv);
         titleTv = findViewById(R.id.tv_title);
         priceTv = findViewById(R.id.tv_price);
@@ -188,6 +190,10 @@ public class OfferDetails extends AppCompatActivity {
     }
 
     public void goBackClick(View view) {
+        finish();
+    }
+
+    public void backOfferClick(View view) {
         finish();
     }
 

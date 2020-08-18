@@ -131,6 +131,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
                         editor.apply();
                         String jsonn = gson.toJson(temparraylist);
+                        Log.d("json_cart",json);
                         SharedPreferences.Editor editorr = cart_class.edit();
                         editorr.putString("Cart", jsonn);
                         editorr.apply();
