@@ -61,6 +61,7 @@ import com.maces.ecommerce.skcashandcarry.Interfaces.Get_UserInfor;
 import com.maces.ecommerce.skcashandcarry.Interfaces.OnBackPressed;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Sliders;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Webservices;
+import com.maces.ecommerce.skcashandcarry.LockableNestedScrollView;
 import com.maces.ecommerce.skcashandcarry.MainActivity;
 import com.maces.ecommerce.skcashandcarry.Model.Cart_Class;
 import com.maces.ecommerce.skcashandcarry.Model.Categories_Class;
@@ -91,6 +92,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -136,7 +138,6 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     private static final int PAGE_START = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private int TOTAL_PAGES = 8;
     private int currentPage = PAGE_START;
 
     private LinearLayout mLinearLayout;
@@ -144,7 +145,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     private ArrayList<Movie> searchAl = new ArrayList<>();
 
     //as
-    private NestedScrollView nestedScrollView;
+    private LockableNestedScrollView nestedScrollView;
     RecyclerView searchRv;
     public static boolean lastPagReached = false;
 
@@ -237,6 +238,7 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                 {
                     //if (currentPage<TOTAL_PAGES)
                     //{
+                    Log.d("last=page", String.valueOf(lastPagReached));
                     if (!lastPagReached)
                     {
                         loadNextPage();
@@ -653,10 +655,11 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
 
     private void loadNextPage() {
-//        if (currentPage !=2)
         productRecyclerView.setNestedScrollingEnabled(false);
+        nestedScrollView.setScrollingEnabled(false);
         currentPage++;
-        if (currentPage >1 && currentPage <= TOTAL_PAGES)
+
+        if (currentPage >1 )
         {
             Log.d("HHH","yes");
             progressBar.setVisibility(View.VISIBLE);
@@ -665,6 +668,8 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+
+
                     Retrofit retrofit = new Retrofit.Builder()
                             .baseUrl("https://skcc.luqmansoftwares.com/api/fetch-products"+ "/?page=" + currentPage)
                             .addConverterFactory(ScalarsConverterFactory.create())
@@ -680,17 +685,19 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                             isLoading = false;
                             int id;
 
-                            List<Movie> results = new ArrayList<>();
+
+
+                            List<Movie> results = new LinkedList<>();
                             List<Movie> tempresults = new ArrayList<>();
-                            try {
+                            //if (currentPage%3 == 0) results.clear();
+                                try {
                                 JSONObject jsonObject = new JSONObject(response.body().toString());
-                                int to = jsonObject.getInt("to");
+                                //int to = jsonObject.getInt("to");
                                 Log.d("current_page", String.valueOf(currentPage));
-                                Log.d("current_to", String.valueOf(to));
-                                if (!String.valueOf(to).equals("null"))
-                                {
+                                //Log.d("current_to", String.valueOf(to));
+
                                     JSONArray jsonarray = jsonObject.getJSONArray("data");
-                                    if (jsonarray.length() > 1) {
+                                    if (jsonarray.length() > 0) {
                                         for (int i = 0; i < jsonarray.length(); i++) {
                                             JSONObject jsonobject = jsonarray.getJSONObject(i);
                                             Movie product_class = new Movie();
@@ -813,37 +820,55 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                                             //searchAl.add(product_class);
                                         }
 
-                                        _paginationAdapter.addAll(results);
-                                        //if (currentPage != TOTAL_PAGES)
-                                        //  _paginationAdapter.addLoadingFooter();
-                                        //else isLastPage = true;
-                                        //country.addAll(results);
-                                        _paginationAdapter.addLoadingFooter();
-                                        _paginationAdapter.stop_progress();
-                                        progressBar.setVisibility(View.GONE);
-                                        nn++;
+//                                        _paginationAdapter.addAll(results);
+//                                        //if (currentPage != TOTAL_PAGES)
+//                                        //  _paginationAdapter.addLoadingFooter();
+//                                        //else isLastPage = true;
+//                                        //country.addAll(results);
+//                                        _paginationAdapter.addLoadingFooter();
+//                                        _paginationAdapter.stop_progress();
+//                                        progressBar.setVisibility(View.GONE);
+//                                        nestedScrollView.setScrollingEnabled(true);
+//                                        nn++;
 
-                                    } else {
+
+                                        if (results.size()<=0){
+                                            progressBar.setVisibility(View.GONE);
+                                        }else {
+                                            progressBar.setVisibility(View.GONE);
+                                            _paginationAdapter.addAll(results);
+                                        }
+                                        _paginationAdapter.addLoadingFooter();
+                                        nestedScrollView.setScrollingEnabled(true);
+
+                                    }
+                                    else {
                                         lastPagReached = true;
-                                        _paginationAdapter.stop_progress();
+                                        //_paginationAdapter.stop_progress();
                                         progressBar.setVisibility(View.GONE);
+                                        tv_no.setVisibility(View.VISIBLE);
+                                        tv_no.setText("No more product found!");
+                                        nestedScrollView.setScrollingEnabled(true);
                                         //    Toast.makeText(getActivity(), getResources().getString(R.string.no_pro), Toast.LENGTH_SHORT).show();
                                     }
-                                }
-                                else
-                                {
-                                    lastPagReached = true;
-                                    progressBar.setVisibility(View.GONE);
-                                    tv_no.setVisibility(View.VISIBLE);
-                                    tv_no.setText("No more product found!");
-                                }
+                                //}
+//                                else
+//                                {
+//                                    lastPagReached = true;
+//                                    progressBar.setVisibility(View.GONE);
+//                                    tv_no.setVisibility(View.VISIBLE);
+//                                    tv_no.setText("No more product found!");
+//                                }
 
 
                             } catch (JSONException e) {
                                 progressBar.setVisibility(View.GONE);
                                 e.printStackTrace();
                                 Log.d("error_msg_server",e.getMessage());
+                                Toast.makeText(getContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
+
+
 
                         }
 
@@ -875,7 +900,6 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
 
     private void loadFirstPage() {
-        //loadNextPage();
         if (currentPage == 1)
         {
             Log.d("current_page",String.valueOf(currentPage));
@@ -971,39 +995,21 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                             product_image = jsonobject.getString("product_image");
                             product_class.setProduct_image("https://skcc.luqmansoftwares.com/uploads/products/" + product_image);
                             results.add(product_class);
-                            searchAl.add(product_class);
                         }
                     } catch (JSONException e) {
                         progressBar.setVisibility(View.GONE);
                         e.printStackTrace();
                     }
-//                _paginationAdapter.addAll(results);
-//                nn++;
-//                if (currentPage <= TOTAL_PAGES) {
-//                    progressBar.setVisibility(View.GONE);
-//                    _paginationAdapter.addLoadingFooter();
-//                } else {
-//                    progressBar.setVisibility(View.GONE);
-//                    isLastPage = true;
-//                }
-//                country.addAll(results);
 
                     if (results.size()<=0){
-//                    layout_2.setVisibility(View.VISIBLE);
-//                    layout_1.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                     }else {
-//                    layout_2.setVisibility(View.GONE);
-//                    layout_1.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.GONE);
                         _paginationAdapter.addAll(results);
                         country.addAll(results);
                     }
-                    //if (currentPage <= TOTAL_PAGES)
                     _paginationAdapter.addLoadingFooter();
-                    //else isLastPage = true;
                     nn++;
-                    //        progressDialog.dismiss();
 
                 }
 
@@ -1023,63 +1029,6 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
     private void filter(String text) {
         //_paginationAdapter.removeLoadingFooter();
         searchProduct(getContext(),text);
-
-
-//        String search_url = "https://skcc.luqmansoftwares.com/api/search-product";
-//
-//        HashMap<String, String> headers = new HashMap<String, String>();
-//        headers.put("Accept", "application/json");
-//        headers.put("Authorization", MySharedPref.getTokenType(getContext()) + " " + MySharedPref.getToken(getContext()));
-//
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(Search.URL)
-//                .addConverterFactory(ScalarsConverterFactory.create())
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//        Search jsonPostService = retrofit.create(Search.class);
-//        Call<String> call = jsonPostService.ApiName(headers);
-//        call.enqueue(new Callback<String>() {
-//            @Override
-//            public void onResponse(Call<String> call, Response<String> response) {
-//                Log.d("search_status", String.valueOf(response));
-////                if (response.isSuccessful())
-////                {
-////                    if (response.body()!=null)
-////                    {
-////                        Log.d("sliders_body", response.body().toString());
-////                        String jsonresponse = response.body().toString();
-////                        //parse_Slider(jsonresponse);
-////                    }
-////                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<String> call, Throwable t) {
-//                progressDialog.dismiss();
-//                Toast.makeText(getContext(), "" + t.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-
-//        ArrayList<Movie> filteredList = new ArrayList<>();
-//        for (Movie item : searchAl) {
-//            if (item.getName().toUpperCase().contains(text) ||
-//                    item.getName().toLowerCase().contains(text.toLowerCase())) {
-//                filteredList.add(item);
-//            }
-
-
-
-
-//            if (filteredList.size() > 0) {
-//                productRecyclerView.setVisibility(View.VISIBLE);
-//                tv_no.setVisibility(View.GONE);
-//                _paginationAdapter.filterList(filteredList);
-//
-//            } else {
-//                productRecyclerView.setVisibility(View.GONE);
-//                tv_no.setVisibility(View.VISIBLE);
-//            }
 
     }
 
