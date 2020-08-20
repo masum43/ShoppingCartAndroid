@@ -242,7 +242,7 @@
     <LinearLayout
         android:layout_margin="@dimen/_5sdp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_40sdp"
         android:layout_alignParentBottom="true"
         android:weightSum="2"
         android:orientation="horizontal">
@@ -250,14 +250,14 @@
         <Button
             android:id="@+id/btn_GoBack"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/add_cart"
-            android:drawableLeft="@drawable/ic_menu_back"
-            android:textAllCaps="true"
+            android:drawableStart="@drawable/ic_menu_back"
+            android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:text="@string/goback"
-            android:textSize="@dimen/_14ssp"
+            android:textSize="@dimen/_10ssp"
             android:textStyle="bold"
             android:layout_marginEnd="@dimen/_3sdp"
             />
@@ -268,14 +268,14 @@
             android:id="@+id/btn_GotoCheckout"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_height="match_parent"
             android:background="@drawable/add_cart"
-            android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+            android:drawableEnd="@drawable/ic_chevron_right_black_24dp"
             android:textAlignment="center"
             android:text="@string/add_to_cart"
-            android:textAllCaps="true"
+            android:textAllCaps="false"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/_14ssp"
+            android:textSize="@dimen/_10ssp"
             android:textStyle="bold" />
 
 <!--        <Button-->

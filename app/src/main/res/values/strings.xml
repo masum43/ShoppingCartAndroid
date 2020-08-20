@@ -164,6 +164,10 @@
     <string name="offer_name">"Offer Name : "</string>
     <string name="offer_price">"Offer Price : " </string>
     <string name="desc">"Description : "</string>
+    <string name="not_selected_yet">Not Selected yet</string>
+    <string name="city">City</string>
+    <string name="edit">Edit</string>
+    <string name="submit">Submit</string>
 
 
 </resources>

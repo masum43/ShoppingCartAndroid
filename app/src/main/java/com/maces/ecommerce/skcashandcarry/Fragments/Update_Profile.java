@@ -1,8 +1,11 @@
 package com.maces.ecommerce.skcashandcarry.Fragments;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +36,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Get_UserInCity;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Get_UserInfor;
+import com.maces.ecommerce.skcashandcarry.Model.CityModel;
 import com.maces.ecommerce.skcashandcarry.Model.MyErrorMessage;
 import com.maces.ecommerce.skcashandcarry.Model.ProductService;
 import com.maces.ecommerce.skcashandcarry.MySharedPref;
@@ -67,14 +71,15 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
     private String city_name;
     private int city_id = 0;
     private String city_response;
-    private TextView cityNameTv;
+    private TextView cityNameTv, cityEditClick;
 
     private ArrayList<String> allCityList = new ArrayList<>();
+    View root;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_update__profile, container, false);
+        root = inflater.inflate(R.layout.fragment_update__profile, container, false);
         ((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar().setTitle((Html.fromHtml("<font color=\"#000000\">" + getString(R.string.menu_updateprofile) + "</font>")));
         prf = getActivity().getSharedPreferences("LoginPref", MODE_PRIVATE);
         token_type = prf.getString("token_typeKey", "");
@@ -93,20 +98,24 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
         Address = root.findViewById(R.id.tvaddress);
         PostCode = root.findViewById(R.id.tvPostCode);
         btn_Done = root.findViewById(R.id.btn_Done);
-        cityNameTv=(TextView) root.findViewById(R.id.city_name_tv);
-
-
-        spinner = (Spinner) root.findViewById(R.id.spinner);
-        prepareCityDropDown();
-
-        // Spinner click listener
-        spinner.setOnItemSelectedListener(this);
-
-        //spinner.setPrompt(MySharedPref.getCityName(getContext()));
-
+        cityEditClick = root.findViewById(R.id.cityEditId);
+        cityNameTv=(TextView) root.findViewById(R.id.currentCityNameId);
 
 
         Get_Userinfo();
+
+
+
+
+        //spinner.setPrompt(MySharedPref.getCityName(getContext()));
+
+        cityEditClick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCustomDialog();
+            }
+        });
+
         btn_Done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,16 +163,10 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
                     Phone.setError(getResources().getString(R.string.correct_mobile_number));
                     Phone.setFocusable(true);
                 }
+
                 else if (city_id == 0)
                 {
-                    int session_city_id = MySharedPref.getCityId(getContext());
-                    if (session_city_id == 0)
-                    {
-                        Toast.makeText(getContext(), "Please update your city!!!", Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        city_id = session_city_id;
-                    }
+                    Toast.makeText(getContext(), "Please update your city!!!", Toast.LENGTH_SHORT).show();
 
                 }
                 else {
@@ -175,6 +178,33 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
         });
         return root;
     }
+
+    //java code
+    private void showCustomDialog()
+    {
+        // Toast.makeText(this, "Custom", Toast.LENGTH_LONG).show();
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.city_custom_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); //to show the corner radius
+
+        // set the custom dialog components - text, image and button
+        Spinner spinner = dialog.findViewById(R.id.spinner);
+        Button submit = dialog.findViewById(R.id.submit);
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cityNameTv.setText(city_name);
+                dialog.dismiss();
+            }
+        });
+        prepareCityDropDown(spinner);
+        // Spinner click listener
+        spinner.setOnItemSelectedListener(this);
+
+        dialog.show();
+    }
+
 
     private void Update_Profile() {
         com.maces.ecommerce.skcashandcarry.Interfaces.Update_Profile jsonPostService;
@@ -258,6 +288,9 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
     }
 
     private void Get_Userinfo() {
+
+        getAllCityList();
+
         Get_UserInfor jsonPostService;
         Get_UserInCity cityjsonPostService;
         HashMap<String, String> headers = new HashMap<>();
@@ -306,8 +339,11 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
 
 
                         city_response = response.body().get("city_id").getAsString();
+                        Log.d("city_id",city_response);
+                        city_id = Integer.parseInt(response.body().get("city_id").getAsString());
+                        addCityName(city_id);
                         //city_id = Integer.parseInt(city_response);
-                        cityNameTv.setText(allCityList.get(Integer.parseInt(city_response)-1));
+                        //cityNameTv.setText(allCityList.get(Integer.parseInt(city_response)).getName());
 
                     } else {
                         getProgressDialog.dismiss();
@@ -331,20 +367,7 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
             }
         });
 
-//        call2.enqueue(new Callback<JsonObject>() {
-//            @Override
-//            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-//                if (response.isSuccessful())
-//                {
-//                    Log.d("user_city",response.body().toString());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<JsonObject> call, Throwable t) {
-//
-//            }
-//        });
+
     }
 
     private void loadFragment(Fragment fragment) {
@@ -364,20 +387,9 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void prepareCityDropDown() {
-        allCityList.add(MySharedPref.getCityName(getContext()));
-        getAllCityList();
-        // Spinner element
+    private void prepareCityDropDown(Spinner spinner) {
 
-
-        //Log.d("city",allCityList.get(0));
-        // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, allCityList);
-
-        // Drop down layout style - list view with radio button
-        //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
         spinner.setAdapter(dataAdapter);
     }
 
@@ -385,7 +397,7 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
         city_name = parent.getItemAtPosition(position).toString();
-        city_id = position;
+        city_id = position+1;
 
         // Showing selected spinner item
         //Toast.makeText(parent.getContext(), "Selected: " + String.valueOf(position), Toast.LENGTH_LONG).show();
@@ -394,9 +406,9 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
         // TODO Auto-generated method stub
     }
 
+
+
     private void getAllCityList() {
-//        BackgroundApiTask backgroundApiTask = new BackgroundApiTask(context);
-//        myDatabaseSource = new MyDatabaseSource(context);
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
 
         final String savedata = "postData";
@@ -413,14 +425,13 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
 
                         try {
 
-                            for (int i = 0; i < response.length(); i++) {
+                            for (int i = 0; i <= response.length(); i++) {
 
                                 JSONObject book_object = response.getJSONObject(i);
+                                int id = book_object.getInt("id");
                                 String name = book_object.getString("name");
 
                                 allCityList.add(name);
-
-
                             }
 
                         } catch (JSONException e) {
@@ -459,5 +470,75 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
 
 
     }
+
+    private void addCityName(final int city_id)
+    {
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+
+        final String savedata = "postData";
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                "https://skcc.luqmansoftwares.com/api/fetch-cities",
+                null,
+                new com.android.volley.Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+
+                        Log.d("city_list", String.valueOf(response));
+
+                        try {
+
+                            for (int i = 0; i <= response.length(); i++) {
+
+                                JSONObject book_object = response.getJSONObject(i);
+                                int id = book_object.getInt("id");
+                                String name = book_object.getString("name");
+
+                                Log.d("check_id",String.valueOf(id));
+                                Log.d("check_city_id",String.valueOf(city_id));
+                                if (id == city_id)
+                                {
+                                    cityNameTv.setText(name);
+
+                                }
+
+                            }
+
+                        } catch (JSONException e) {
+
+                            //Toast.makeText(this, "Server Error", Toast.LENGTH_LONG).show();
+                        }
+
+
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                //Toast.makeText(getContext(), "Response error...", Toast.LENGTH_SHORT).show();
+                // Do something when error occurred
+                Log.e("BackgroundApiTask : ", error.toString());
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() {
+                try {
+                    return savedata == null ? null : savedata.getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    Log.d("Unsprted Encoding", "URLleaveType");
+                    return null;
+                }
+            }
+
+        };
+        requestQueue.add(jsonArrayRequest);
+    }
+
 
 }

@@ -158,5 +158,9 @@
     <string name="offer_name">Nombre de oferta :</string>
     <string name="offer_price">Precio de oferta :</string>
     <string name="desc">"Descripción : "</string>
+    <string name="not_selected_yet">Aún no seleccionado</string>
+    <string name="city">Ciudad</string>
+    <string name="edit">Editar</string>
+    <string name="submit">Enviar</string>
 
 </resources>
