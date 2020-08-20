@@ -31,6 +31,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.maces.ecommerce.skcashandcarry.Interfaces.Get_UserInCity;
 import com.maces.ecommerce.skcashandcarry.Interfaces.Get_UserInfor;
 import com.maces.ecommerce.skcashandcarry.Model.MyErrorMessage;
 import com.maces.ecommerce.skcashandcarry.Model.ProductService;
@@ -258,6 +259,7 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
 
     private void Get_Userinfo() {
         Get_UserInfor jsonPostService;
+        Get_UserInCity cityjsonPostService;
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/json");
         if (token_type.toString().length() < 1) {
@@ -268,17 +270,21 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
         JsonObject jsonObject = new JsonObject();
         if (token_type.toString().length() < 1) {
             jsonPostService = ProductService.createService(Get_UserInfor.class, "https://skcc.luqmansoftwares.com/api/auth/", Login.token_type_val + " " + Login.access_token_val);
+            cityjsonPostService = ProductService.createService(Get_UserInCity.class, "https://skcc.luqmansoftwares.com/api/auth/", token_type + " " + access_token);
         } else {
             jsonPostService = ProductService.createService(Get_UserInfor.class, "https://skcc.luqmansoftwares.com/api/auth/", token_type + " " + access_token);
+            cityjsonPostService = ProductService.createService(Get_UserInCity.class, "https://skcc.luqmansoftwares.com/api/auth/", token_type + " " + access_token);
         }
 
         Call<JsonObject> call = jsonPostService.postRawJSON();
+        final Call<JsonObject> call2 = cityjsonPostService.postRawJSON();
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 try {
                     if (response.isSuccessful()) {
                         getProgressDialog.dismiss();
+                        Log.d("user_info",response.body().toString());
                         name = response.body().get("name").getAsString();
                         Fullname.setText("" + name);
 
@@ -297,9 +303,11 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
                         business_name = response.body().get("business_name").getAsString();
                         Business.setText("" + business_name);
 
-                        city_response = response.body().get("city").getAsString();
+
+
+                        city_response = response.body().get("city_id").getAsString();
                         //city_id = Integer.parseInt(city_response);
-                        cityNameTv.setText(MySharedPref.getCityName(getContext()));
+                        cityNameTv.setText(allCityList.get(Integer.parseInt(city_response)-1));
 
                     } else {
                         getProgressDialog.dismiss();
@@ -322,6 +330,21 @@ public class Update_Profile extends Fragment implements AdapterView.OnItemSelect
                 }
             }
         });
+
+//        call2.enqueue(new Callback<JsonObject>() {
+//            @Override
+//            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+//                if (response.isSuccessful())
+//                {
+//                    Log.d("user_city",response.body().toString());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<JsonObject> call, Throwable t) {
+//
+//            }
+//        });
     }
 
     private void loadFragment(Fragment fragment) {

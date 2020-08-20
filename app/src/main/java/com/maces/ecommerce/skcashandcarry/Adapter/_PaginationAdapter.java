@@ -133,10 +133,11 @@ public class _PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         context.startActivity(product_intent);
                     }
                 });
-                //Picasso.get().load(movieList.get(i).getProduct_image()).into(movieViewHolder.icon);
+                Picasso.get().load(movieList.get(i).getProduct_image()).into(movieViewHolder.icon);
                 Picasso.get()
                         .load(movieList.get(i).getProduct_image())
-                        .networkPolicy(NetworkPolicy.OFFLINE)
+                        .networkPolicy(NetworkPolicy.NO_CACHE)
+                        .fit().centerCrop()
                         .into(movieViewHolder.icon, new Callback() {
                             @Override
                             public void onSuccess() {

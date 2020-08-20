@@ -7,8 +7,8 @@ android {
         applicationId "com.maces.ecommerce.skcashandcarry"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 9
-        versionName "9.0"
+        versionCode 10
+        versionName "10.0"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         packagingOptions {
@@ -58,6 +58,12 @@ dependencies {
     implementation 'cz.msebera.android:httpclient:4.4.1.2' //api
 
     implementation 'com.github.ganfra:material-spinner:2.0.0'
+
+    implementation 'com.github.tntkhang:full-screen-image-view-library:1.1.0'
+
+
+    implementation 'com.intuit.sdp:sdp-android:1.0.6' //for size
+    implementation 'com.intuit.ssp:ssp-android:1.0.6' //for text
 
 
 }

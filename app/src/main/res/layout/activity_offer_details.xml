@@ -90,8 +90,76 @@
             android:src="@drawable/logout_btn"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/_8sdp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/tv_desc"
+                tools:layout_editor_absoluteX="0dp"
+                android:text="@string/offer_name"
+                />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintBottom_toTopOf="@+id/tv_desc"
+                tools:layout_editor_absoluteX="0dp"
+                tools:text="This is a title" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/tv_title"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="@+id/tv_title"
+                app:layout_constraintTop_toTopOf="@+id/tv_title"
+                android:text="@string/offer_price"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/tv_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintEnd_toEndOf="@+id/tv_title"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="@+id/tv_title"
+                app:layout_constraintTop_toTopOf="@+id/tv_title"
+                tools:text="1990 Tk"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:textColor="#000000"
+                />
+        </LinearLayout>
+
+
+
+
+
         <TextView
-            android:id="@+id/tv_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/_12ssp"
@@ -100,82 +168,68 @@
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="@+id/tv_title"
             app:layout_constraintTop_toTopOf="@+id/tv_title"
-            tools:text="Offer Price: 1990 Tk"
+            android:text="@string/desc"
             android:layout_marginTop="@dimen/_2sdp"
+            android:textColor="#000000"
             />
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#000"
-            android:textSize="@dimen/_12ssp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/tv_desc"
-            tools:layout_editor_absoluteX="0dp"
-            tools:text="This is a title" />
 
         <TextView
             android:id="@+id/tv_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#000"
-            android:textSize="@dimen/_10ssp"
+            android:textSize="@dimen/_12ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:layout_editor_absoluteX="16dp"
             tools:text="This is a description" />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_margin="@dimen/_10sdp"
+        android:layout_margin="@dimen/_5sdp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
+        android:weightSum="2"
         android:orientation="horizontal">
+
 
         <Button
             android:id="@+id/btn_GoBack"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/_40sdp"
             android:background="@drawable/add_cart"
             android:drawableLeft="@drawable/ic_menu_back"
-            android:drawablePadding="10dp"
-            android:lines="1"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
+            android:drawablePadding="@dimen/_5sdp"
+            android:textAlignment="center"
             android:text="@string/goback"
             android:textAllCaps="true"
             android:textColor="@android:color/white"
-            android:textSize="17sp"
+            android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
             android:onClick="goBackClick"
+            android:layout_marginEnd="@dimen/_3sdp"
             />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:orientation="vertical">
+
 
             <Button
+                android:layout_marginStart="@dimen/_3sdp"
                 android:id="@+id/btn_GotoCheckout"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_weight="1"
                 android:background="@drawable/add_cart"
                 android:drawableRight="@drawable/ic_chevron_right_black_24dp"
-                android:lines="1"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+                android:textAlignment="center"
                 android:text="@string/add_to_cart"
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
-                android:textSize="17dp"
+                android:textSize="@dimen/_12ssp"
                 android:textStyle="bold"
                 android:onClick="cartClick"
                 />
 
-
-        </LinearLayout>
     </LinearLayout>
 
 

@@ -155,4 +155,8 @@
     <string name="goback">Regresa</string>
 
     <string name="add_to_cart">Añadir al carrito</string>
+    <string name="offer_name">Nombre de oferta :</string>
+    <string name="offer_price">Precio de oferta :</string>
+    <string name="desc">"Descripción : "</string>
+
 </resources>

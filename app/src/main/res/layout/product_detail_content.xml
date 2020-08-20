@@ -240,51 +240,78 @@
     </ScrollView>
 
     <LinearLayout
-        android:layout_margin="@dimen/_10sdp"
+        android:layout_margin="@dimen/_5sdp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:weightSum="2"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/btn_GoBack"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_weight="1"
             android:background="@drawable/add_cart"
             android:drawableLeft="@drawable/ic_menu_back"
-            android:drawablePadding="10dp"
-            android:lines="1"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:text="@string/goback"
             android:textAllCaps="true"
             android:textColor="@android:color/white"
-            android:textSize="17sp"
+            android:text="@string/goback"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            android:layout_marginEnd="@dimen/_3sdp"
+            />
+
+
+        <Button
+            android:layout_marginStart="@dimen/_3sdp"
+            android:id="@+id/btn_GotoCheckout"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/_40sdp"
+            android:background="@drawable/add_cart"
+            android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+            android:textAlignment="center"
+            android:text="@string/add_to_cart"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/_14ssp"
             android:textStyle="bold" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:orientation="vertical">
+<!--        <Button-->
+<!--            -->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="48dp"-->
+<!--            -->
+<!--            android:drawablePadding="10dp"-->
+<!--            android:lines="1"-->
+<!--            android:paddingStart="12dp"-->
+<!--            android:paddingEnd="12dp"-->
+<!--            />-->
 
-            <Button
-                android:id="@+id/btn_GotoCheckout"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:background="@drawable/add_cart"
-                android:drawableRight="@drawable/ic_chevron_right_black_24dp"
-                android:lines="1"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:text="Add to Cart"
-                android:textAllCaps="true"
-                android:textColor="@android:color/white"
-                android:textSize="17dp"
-                android:textStyle="bold" />
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="end"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <Button-->
+<!--                android:id="@+id/btn_GotoCheckout"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="48dp"-->
+<!--                android:background="@drawable/add_cart"-->
+<!--                android:drawableRight="@drawable/ic_chevron_right_black_24dp"-->
+<!--                android:lines="1"-->
+<!--                android:paddingStart="12dp"-->
+<!--                android:paddingEnd="12dp"-->
+<!--                android:text="@string/add_to_cart"-->
+<!--                android:textAllCaps="true"-->
+<!--                android:textColor="@android:color/white"-->
+<!--                android:textSize="17dp"-->
+<!--                android:textStyle="bold" />-->
 
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
     </LinearLayout>
 
 </RelativeLayout>

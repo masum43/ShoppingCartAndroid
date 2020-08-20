@@ -98,6 +98,7 @@ public class Home extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.nav_home) {
+                    Product_Home.lastPagReached = false;
                     loadFragment(new Product_Home());
                     WHO = "Home";
                     mDrawer.closeDrawers();

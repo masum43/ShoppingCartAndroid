@@ -161,7 +161,9 @@
     <string name="goback">Go Back</string>
 
     <string name="add_to_cart">Add to Cart</string>
-
+    <string name="offer_name">"Offer Name : "</string>
+    <string name="offer_price">"Offer Price : " </string>
+    <string name="desc">"Description : "</string>
 
 
 </resources>

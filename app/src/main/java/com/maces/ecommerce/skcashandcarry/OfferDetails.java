@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.tntkhang.fullscreenimageview.library.FullScreenImageViewActivity;
+import com.maces.ecommerce.skcashandcarry.Adapter.PaginationAdapter;
 import com.maces.ecommerce.skcashandcarry.Adapter.ProductDetailAdapter;
 import com.maces.ecommerce.skcashandcarry.Model.ProductImage;
 import com.maces.ecommerce.skcashandcarry.Model.ProductModel;
@@ -40,7 +42,8 @@ public class OfferDetails extends AppCompatActivity {
     String price;
     String desc;
     String id;
-    private static ProductDetailAdapter.HomeCallBack homeCallBack;
+    private static HomeCallBack homeCallBack;
+    ArrayList<String> uriString = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +64,25 @@ public class OfferDetails extends AppCompatActivity {
         price = getIntent().getStringExtra("price");
         desc = getIntent().getStringExtra("desc");
 
-        priceTv.setText("Offer Price: "+price);
+        priceTv.setText(price);
         titleTv.setText(title);
         descTv.setText(desc);
         Picasso.get().load(url).into(iv);
+
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                uriString.clear();
+                uriString.add(url);
+
+                Intent fullImageIntent = new Intent(OfferDetails.this, FullScreenImageViewActivity.class);
+                // uriString is an ArrayList<String> of URI of all images
+                fullImageIntent.putExtra(FullScreenImageViewActivity.URI_LIST_DATA, uriString);
+                // pos is the position of image will be showned when open
+                fullImageIntent.putExtra(FullScreenImageViewActivity.IMAGE_FULL_SCREEN_CURRENT_POS, 0);
+                startActivity(fullImageIntent);
+            }
+        });
     }
 
     public void cartClick(View view) {
@@ -184,6 +202,7 @@ public class OfferDetails extends AppCompatActivity {
                     //homeCallBack.updateCartCount(OfferDetails.this);
                     //homeCallBack.finishIt();
                     dialog.dismiss();
+                    finish();
                 }
             }
         });
@@ -197,9 +216,9 @@ public class OfferDetails extends AppCompatActivity {
         finish();
     }
 
-//    public interface HomeCallBack {
-//        boolean onCreateOptionsMenu(Menu menu);
-//        void updateCartCount(Context context);
-//        void finishIt();
-//    }
+    public interface HomeCallBack {
+        boolean onCreateOptionsMenu(Menu menu);
+        void updateCartCount(Context context);
+        void finishIt();
+    }
 }

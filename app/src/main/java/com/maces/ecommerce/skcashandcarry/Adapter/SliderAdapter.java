@@ -46,21 +46,22 @@ public class SliderAdapter extends
         final SliderItem sliderItem = mSliderItems.get(position);
 
 
-//        Picasso.get().load(sliderItem.getImageUrl()).resize(200,230)
-//                .into(viewHolder.imageViewBackground);
-//        Picasso.Builder builder = new Picasso.Builder(context);
-//        builder.listener(new Picasso.Listener() {
-//            @Override
-//            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-//     //           Toast.makeText(context, "Image Error " +exception.toString(), Toast.LENGTH_SHORT).show();
-//
-//            }
-//        });
-
         Picasso.get().load(Constant.sliderImageBase+sliderItem.getImageUrl()).into(viewHolder.imageViewBackground);
-        Log.d("slider_img",Constant.sliderImageBase+sliderItem.getImageUrl());
 
         viewHolder.offerDetailsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context, OfferDetails.class);
+                i.putExtra("id",String.valueOf(sliderItem.getId()));
+                i.putExtra("title",sliderItem.getTitle());
+                i.putExtra("price",sliderItem.getPrice());
+                i.putExtra("desc",sliderItem.getDescription());
+                i.putExtra("url",Constant.sliderImageBase+sliderItem.getImageUrl());
+                context.startActivity(i);
+            }
+        });
+
+        viewHolder.imageViewBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(context, OfferDetails.class);

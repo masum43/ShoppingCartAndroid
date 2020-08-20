@@ -568,8 +568,6 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
 
             Log.d("jsonArray",String.valueOf(jsonarray));
 
-            //JSONObject jsonObject = new JSONObject(response);
-            // JSONArray jsonarray = jsonObject.getJSONArray("slider-images");
 
             for (int i = 0; i < jsonarray.length(); i++) {
                 JSONObject jsonobject = jsonarray.getJSONObject(i);
@@ -582,7 +580,6 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                 description = jsonobject.getString("description");
                 id = jsonobject.getInt("product_id");
 
-                Log.d("idStr", String.valueOf(id));
 
                 //setting
                 sliderItem.setId(id);
@@ -664,10 +661,10 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
             Log.d("HHH","yes");
             progressBar.setVisibility(View.VISIBLE);
 
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
+//            Handler handler = new Handler();
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
 
 
                     Retrofit retrofit = new Retrofit.Builder()
@@ -879,8 +876,8 @@ public class Product_Home extends Fragment implements _PaginationAdapter.CallBac
                             Log.d("error_msg",t.getMessage());
                         }
                     });
-                }
-            }, 2500);
+//                }
+//            }, 2500);
 
 
 
